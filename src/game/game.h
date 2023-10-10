@@ -10,6 +10,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "gameObject.h"
+
 class Game {
 protected:
     // window variables
@@ -24,7 +26,7 @@ protected:
 	sf::Vector2f mousePosView;
 
     // containers
-    //std::vector<
+    std::unordered_map<std::string, std::vector<GameObject>> gameObjects;
 
     // time vars
     sf::Clock deltaClock;

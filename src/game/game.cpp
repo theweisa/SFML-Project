@@ -14,6 +14,7 @@ void Game::Run() {
 }
 void Game::Update() {
     UpdateDeltaTime();
+    UpdateMousePos();
     UpdatePollEvents();
     Render();
     window->display();
