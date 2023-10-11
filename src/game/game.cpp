@@ -23,6 +23,7 @@ void Game::Update() {
     UpdateMousePos();
     UpdatePollEvents();
     UpdateInputs();
+    UpdateGameObjects();
     Render();
     window->display();
 }
@@ -60,8 +61,15 @@ void Game::UpdatePollEvents() {
         }
 	}
 }
+void Game::UpdateGameObjects() {
+    for (auto objVec : gameObjects) {
+        for (auto& obj : objVec.second) {
+            obj->Update(deltaTime);
+        }
+    }
+}
 void Game::UpdateInputs() {
-    return;
+    
 }
 void Game::UpdateMousePos() {
 	//updates mouse position relative to window
@@ -73,4 +81,38 @@ void Game::AddAsset(const std::string key, const std::string fileName) {
 	if (!assets[key]->loadFromFile(fileName)) {
 		std::cout << "ERROR: failed to load " << fileName << std::endl;
 	}
+}
+
+std::vector<GameObject*> Game::PositionOverGameObjects(sf::Vector2f pos) {
+    std::vector<GameObject*> hoveredObjs;
+    for (auto objVec : gameObjects) {
+        for (auto& obj : objVec.second) {
+            if (obj->InsideBounds(pos)) {
+                hoveredObjs.push_back(obj);
+            }
+        }
+    }
+    return hoveredObjs;
+}
+
+
+bool Game::DeleteGameObject(GameObject* delObj) {
+    for (auto &keyval : gameObjects) {
+        int objIndex = 0;
+        for (auto *obj : gameObjects[keyval.first]) {
+            if (obj == delObj) {
+                return DeleteGameObject(keyval.first, objIndex);
+            }
+            objIndex++;
+        }
+    }
+}
+
+bool Game::DeleteGameObject(std::string key, int index) {
+    delete gameObjects[key][index];
+    auto itr = gameObjects[key].erase(gameObjects[key].begin()+index);
+    if (itr != gameObjects[key].end()) {
+        return true;
+    }
+    return false;
 }

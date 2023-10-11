@@ -2,7 +2,9 @@
 #define GAMEOBJECT_H
 
 #include <SFML/Graphics.hpp>
+#include <string>
 #include "animation.h"
+
 
 /*
 game object:
@@ -13,17 +15,24 @@ game object:
 */
 class GameObject {
 	protected:
+	public:
+		// vars
+		std::string id;
 		sf::Texture texture;
 		sf::Sprite sprite;
+		sf::Vector2f dimensions;
 		std::unordered_map<std::string, Animation*> animations;
-	public:
+
+		// methods
 		GameObject();
-		GameObject(sf::Texture);
-		GameObject(sf::Texture, sf::Vector2f);
-		GameObject(Animation*);
+		GameObject(std::string, sf::Texture*);
+		GameObject(std::string, sf::Texture*, sf::Vector2f);
+		GameObject(std::string, Animation*);
+		GameObject(const GameObject&);
 		~GameObject();
 
-		void Render(sf::RenderTarget&);
+		virtual void Render(sf::RenderTarget&);
+		virtual void Update(float);
 
 		// mutators
 		void AddAnimation(std::string, Animation*);
@@ -32,11 +41,14 @@ class GameObject {
 		void SetPosition(sf::Vector2f newPos);
 		void SetPosition(float newX, float newY);
 		void SetRotation(float newAngle);
+		void SetTexture(const sf::Texture*);
+		void SetTexture(sf::Texture*, sf::Vector2f);
+		void SetTexture(sf::Texture*);
 
 		// accessors
-		const sf::Vector2f GetPosition() const;
-		const float GetRotation() const;
+		const sf::Vector2f GetPosition() const { return sprite.getPosition(); }
 		const bool GetEndOfAnimation(const std::string key);
+		const bool InsideBounds(sf::Vector2f);
 };
 
 #endif

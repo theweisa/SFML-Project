@@ -4,6 +4,7 @@
 #include "game/game.h"
 
 class LevelEditor : public Game {
+    enum ToolState { Brush, Erase, Eyedrop };
     protected:
         sf::VertexArray grid;
         sf::Vector2i gridDimensions;
@@ -11,12 +12,17 @@ class LevelEditor : public Game {
         std::vector<GameObject*> currentTiles;
         sf::Vector2f xMargins;
         sf::Vector2f yMargins;
+        ToolState toolState=Brush;
     public:
         LevelEditor();
         ~LevelEditor();
         void InitGrid(int, int, sf::Vector2f, sf::Vector2f);
         void InitAssets() override;
         sf::Vector2f GetRelativeGridPosition(sf::Vector2f pos);
+        void PlaceTiles();
+        void EraseTiles();
+        void EyedropTile();
+        void SetCurrentTileTextures(sf::Texture*);
         void Render() override;
         void Update() override;
         void UpdateInputs() override;

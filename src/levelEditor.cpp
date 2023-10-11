@@ -1,10 +1,9 @@
 #include "levelEditor.h"
 
 LevelEditor::LevelEditor() {
-    InitGrid(64, 64, sf::Vector2f(25.f, 25.f), sf::Vector2f(25.f, 25.f));
+    InitGrid(8, 8, sf::Vector2f(25.f, 25.f), sf::Vector2f(25.f, 25.f));
     InitAssets();
-    GameObject* test = new GameObject(*assets["test tile"], unitDimensions);
-    currentTiles.push_back(test);
+    currentTiles.push_back(new GameObject("1", assets["test tile"], unitDimensions));
     //currentTiles.push_back(sf::RectangleShape(unitDimensions));
 }
 
@@ -30,9 +29,13 @@ void LevelEditor::InitGrid(int xDim, int yDim, sf::Vector2f newXMargins, sf::Vec
         verticePos += 2;
     }
 }
+
 void LevelEditor::InitAssets() {
-    std::cout << "init assets" << std::endl;
-    AddAsset("test tile", "assets/textures/testTile.png");
+    // cwd: "C:\\Users\\Andrew Wei\\Documents\\SFML-Project\\build\\bin\\Debug" lmao
+    const std::string assetPath = "../../../assets/textures/";
+    AddAsset("test tile", assetPath+"testTile.png");
+    AddAsset("test tile 2", assetPath+"testTile2.png");
+    AddAsset("eraser tile", assetPath+"eraser.png");
 }
 sf::Vector2f LevelEditor::GetRelativeGridPosition(sf::Vector2f pos) {
     sf::Vector2i unitPos = sf::Vector2i((pos.x-xMargins.x) / unitDimensions.x, (pos.y-yMargins.x) / unitDimensions.y);
@@ -49,21 +52,98 @@ sf::Vector2f LevelEditor::GetRelativeGridPosition(sf::Vector2f pos) {
 void LevelEditor::UpdateInputs() {
     Game::UpdateInputs();
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        switch(toolState) {
+            case Brush:
+                PlaceTiles();
+                break;
+            case Erase:
+                EraseTiles();
+                break;
+            case Eyedrop:
+                EyedropTile();
+                break;
+            default:
+                break;
+        }
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+        toolState = Brush;
+        SetCurrentTileTextures(assets["test tile"]);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
+        toolState = Brush;
+        SetCurrentTileTextures(assets["test tile 2"]);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+        toolState = Erase;
+        SetCurrentTileTextures(assets["eraser tile"]);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
+        toolState = Brush;
+        SetCurrentTileTextures(assets["test tile"]);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::I)) {
+        toolState = Eyedrop;
+        SetCurrentTileTextures(assets["eraser tile"]);
+    }
+}
 
+void LevelEditor::PlaceTiles() {
+    EraseTiles();
+    for (auto tile : currentTiles) {
+        gameObjects["tiles"].push_back(new GameObject(*tile));
+    }
+}
+
+void LevelEditor::EraseTiles() {
+    for (auto tile : currentTiles) {
+        int objIndex = 0;
+        for (auto *obj : gameObjects["tiles"]) {
+            if (obj->InsideBounds(tile->GetPosition())) {
+                DeleteGameObject("tiles", objIndex);
+                objIndex--;
+            }
+            else {
+                objIndex++;
+            }
+        }
+    }
+}
+
+void LevelEditor::EyedropTile() {
+    for (auto *obj : gameObjects["tiles"]) {
+        if (obj->InsideBounds(mousePosView)) {
+            std::cout << "eyedrop" << std::endl;
+            for (auto tile : currentTiles) {
+                tile->SetTexture(obj->sprite.getTexture());
+            }
+            toolState = Brush;
+            return;
+        }
+    }
+}
+
+void LevelEditor::SetCurrentTileTextures(sf::Texture* newTexture) {
+    for (auto tile : currentTiles) {
+        tile->SetTexture(newTexture, unitDimensions);
     }
 }
 
 void LevelEditor::Update() {
     Game::Update();
-    //if (currentTiles.size() > 0)
-    //currentTiles[0]->SetPosition(GetRelativeGridPosition(mousePosView));
+    if (currentTiles.size() > 0)
+        currentTiles[0]->SetPosition(GetRelativeGridPosition(mousePosView));
 }
 
 void LevelEditor::Render() {
     Game::Render();
     window->draw(grid);
+    for (auto objKey : gameObjects) {
+        for (auto& obj : objKey.second) {
+            obj->Render(*window);
+        }
+    }
     for (auto& tile : currentTiles) {
         tile->Render(*window);
     }
-    //window->draw(currentTiles[0]);
 }

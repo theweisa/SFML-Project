@@ -7,8 +7,10 @@
 #include <SFML/Audio.hpp>
 
 #include <iostream>
+#include <string>
 #include <unordered_map>
 #include <vector>
+#include <ostream>
 
 #include "gameObject.h"
 
@@ -47,9 +49,15 @@ public:
     //time it takes to update and render one frame
     void UpdateDeltaTime();
     void UpdatePollEvents();
+    void UpdateGameObjects();
     void UpdateMousePos();
     virtual void UpdateInputs();
     void AddAsset(const std::string, const std::string);
+    std::vector<GameObject*> PositionOverGameObjects(sf::Vector2f);
+    bool DeleteGameObject(GameObject*);
+    bool DeleteGameObject(std::string, int);
+
+    sf::Vector2f GetMousePosView() { return mousePosView; }
 };
 
 

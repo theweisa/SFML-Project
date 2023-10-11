@@ -1,18 +1,23 @@
 #include "gameObject.h"
 
-GameObject::GameObject(sf::Texture objectTexture) {
-    std::cout << "construct game object w/ texture" << std::endl;
+GameObject::GameObject(std::string newId, sf::Texture* objectTexture) : id(newId) {
     //set the animations sprite to the texture
-	sprite.setTexture(objectTexture, true);
+    texture = *objectTexture;
+	sprite.setTexture(*objectTexture, true);
 }
-GameObject::GameObject(sf::Texture objectTexture, sf::Vector2f pxScale) {
+GameObject::GameObject(std::string newId, sf::Texture* objectTexture, sf::Vector2f pxScale) : id(newId) {
     //set the animations sprite to the texture
-    std::cout << "construct game object w/ pixelsize" << std::endl;
-	sprite.setTexture(objectTexture, true);
+    texture = *objectTexture;
+	sprite.setTexture(*objectTexture, true);
     sprite.setScale(sf::Vector2f(pxScale.x/sprite.getLocalBounds().width, pxScale.y/sprite.getLocalBounds().height));
 }
-GameObject::GameObject(Animation* defaultAnim) {
+GameObject::GameObject(std::string newId, Animation* defaultAnim) : id(newId) {
     animations["default"] = defaultAnim;
+}
+GameObject::GameObject(const GameObject& rhObj) {
+    this->id = rhObj.id;
+    this->sprite = rhObj.sprite;
+    this->animations = rhObj.animations;
 }
 
 GameObject::~GameObject() {
@@ -36,10 +41,32 @@ void GameObject::Render(sf::RenderTarget& target) {
     target.draw(sprite);
 }
 
+void GameObject::Update(float deltaTime) {
+    
+}
+
 void GameObject::SetPosition(sf::Vector2f newPos) {
     sprite.setPosition(newPos);
 }
 
 void GameObject::SetPosition(float newX, float newY) {
     sprite.setPosition(newX, newY);
+}
+void GameObject::SetTexture(sf::Texture* txtr, sf::Vector2f pxScale) {
+    SetTexture(txtr);
+    sprite.setScale(sf::Vector2f(pxScale.x/sprite.getLocalBounds().width, pxScale.y/sprite.getLocalBounds().height));
+}
+
+void GameObject::SetTexture(const sf::Texture * txtr) {
+    texture = *txtr;
+    sprite.setTexture(*txtr);
+}
+
+void GameObject::SetTexture(sf::Texture* txtr) {
+    texture = *txtr;
+    sprite.setTexture(*txtr);
+}
+
+const bool GameObject::InsideBounds(sf::Vector2f pos) {
+    return (sprite.getGlobalBounds().contains(pos));
 }
