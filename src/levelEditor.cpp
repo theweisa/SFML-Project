@@ -2,12 +2,14 @@
 
 LevelEditor::LevelEditor() {
     InitGrid(64, 64, sf::Vector2f(25.f, 25.f), sf::Vector2f(25.f, 25.f));
+    InitAssets();
+    GameObject* test = new GameObject(*assets["test tile"], unitDimensions);
+    currentTiles.push_back(test);
+    //currentTiles.push_back(sf::RectangleShape(unitDimensions));
 }
+
 LevelEditor::~LevelEditor() {
-    for (int i = grid.getVertexCount()-1; i >= 0; i--) {
-        delete &grid[i];
-    }
-    grid.clear();
+    
 }
 void LevelEditor::InitGrid(int xDim, int yDim, sf::Vector2f newXMargins, sf::Vector2f newYMargins) {
     gridDimensions = sf::Vector2i(xDim, yDim);
@@ -28,21 +30,40 @@ void LevelEditor::InitGrid(int xDim, int yDim, sf::Vector2f newXMargins, sf::Vec
         verticePos += 2;
     }
 }
+void LevelEditor::InitAssets() {
+    std::cout << "init assets" << std::endl;
+    AddAsset("test tile", "assets/textures/testTile.png");
+}
 sf::Vector2f LevelEditor::GetRelativeGridPosition(sf::Vector2f pos) {
     sf::Vector2i unitPos = sf::Vector2i((pos.x-xMargins.x) / unitDimensions.x, (pos.y-yMargins.x) / unitDimensions.y);
-    sf::Vector2f gridPos = sf::Vector2f(unitPos.x * unitDimensions.x, unitPos.y * unitDimensions.y);
+    sf::Vector2f gridPos = sf::Vector2f(
+        std::clamp(xMargins.x+unitPos.x * unitDimensions.x, xMargins.x, windowWidth-xMargins.x-unitDimensions.x),
+        std::clamp(yMargins.x+unitPos.y * unitDimensions.y, yMargins.x, windowHeight-yMargins.y-unitDimensions.y)
+    );
     //std::cout << "Unit pos: (" << unitPos.x << ", " << unitPos.y << ")" << std::endl;
-    // std::cout << "Grid pos: (" << gridPos.x << ", " << gridPos.y << ")" << std::endl;
-    return gridPos;
+    //std::cout << "Grid pos: (" << gridPos.x << ", " << gridPos.y << ")" << std::endl;
+    return gridPos; 
     
+}
+
+void LevelEditor::UpdateInputs() {
+    Game::UpdateInputs();
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+
+    }
 }
 
 void LevelEditor::Update() {
     Game::Update();
-    GetRelativeGridPosition(mousePosView);
+    //if (currentTiles.size() > 0)
+    //currentTiles[0]->SetPosition(GetRelativeGridPosition(mousePosView));
 }
 
 void LevelEditor::Render() {
     Game::Render();
     window->draw(grid);
+    for (auto& tile : currentTiles) {
+        tile->Render(*window);
+    }
+    //window->draw(currentTiles[0]);
 }

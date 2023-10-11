@@ -1,11 +1,17 @@
-#include "Game.h"
+#include "game.h"
 
 Game::Game() {
-    std::cout << "Game Constructor Called" << std::endl;
     InitWindow();
 }
+
 Game::~Game() {
     delete window;
+    //delete textures
+	for (auto& texture : assets) delete texture.second;
+    // delete game objects
+    for (auto objVec : gameObjects) {
+        for (auto& obj : objVec.second) delete obj;
+    }
 }
 void Game::Run() {
     while(Running()) {
@@ -16,6 +22,7 @@ void Game::Update() {
     UpdateDeltaTime();
     UpdateMousePos();
     UpdatePollEvents();
+    UpdateInputs();
     Render();
     window->display();
 }
@@ -48,11 +55,22 @@ void Game::UpdatePollEvents() {
             case sf::Event::Closed:
                 window->close();
                 break;
+            default:
+                break;
         }
 	}
+}
+void Game::UpdateInputs() {
+    return;
 }
 void Game::UpdateMousePos() {
 	//updates mouse position relative to window
 	mousePosWindow = sf::Mouse::getPosition(*window);
 	mousePosView = window->mapPixelToCoords(mousePosWindow);
+}
+void Game::AddAsset(const std::string key, const std::string fileName) {
+	assets[key] = new sf::Texture();
+	if (!assets[key]->loadFromFile(fileName)) {
+		std::cout << "ERROR: failed to load " << fileName << std::endl;
+	}
 }

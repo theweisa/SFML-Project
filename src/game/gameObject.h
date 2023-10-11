@@ -19,8 +19,11 @@ class GameObject {
 	public:
 		GameObject();
 		GameObject(sf::Texture);
+		GameObject(sf::Texture, sf::Vector2f);
 		GameObject(Animation*);
 		~GameObject();
+
+		void Render(sf::RenderTarget&);
 
 		// mutators
 		void AddAnimation(std::string, Animation*);

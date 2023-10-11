@@ -21,12 +21,15 @@ protected:
     float windowWidth;
     float windowHeight;
 
+    // assets
+    std::unordered_map<std::string, sf::Texture*> assets;
+
     // mouse pos
     sf::Vector2i mousePosWindow;
 	sf::Vector2f mousePosView;
 
     // containers
-    std::unordered_map<std::string, std::vector<GameObject>> gameObjects;
+    std::unordered_map<std::string, std::vector<GameObject*>> gameObjects;
 
     // time vars
     sf::Clock deltaClock;
@@ -36,6 +39,7 @@ public:
     Game();
     ~Game();
     void Run();
+    virtual void InitAssets() = 0;
     virtual void Update();
     virtual void Render();
     void InitWindow();
@@ -44,6 +48,8 @@ public:
     void UpdateDeltaTime();
     void UpdatePollEvents();
     void UpdateMousePos();
+    virtual void UpdateInputs();
+    void AddAsset(const std::string, const std::string);
 };
 
 
