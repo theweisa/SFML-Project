@@ -52,6 +52,12 @@ void GameObject::SetPosition(sf::Vector2f newPos) {
 void GameObject::SetPosition(float newX, float newY) {
     sprite.setPosition(newX, newY);
 }
+const sf::Vector2f GameObject::GetOriginPosition() const {
+    return sf::Vector2f(
+        sprite.getPosition().x + sprite.getLocalBounds().width/2,
+        sprite.getPosition().y + sprite.getLocalBounds().height/2
+    );
+}
 void GameObject::SetTexture(sf::Texture* txtr, sf::Vector2f pxScale) {
     SetTexture(txtr);
     sprite.setScale(sf::Vector2f(pxScale.x/sprite.getLocalBounds().width, pxScale.y/sprite.getLocalBounds().height));

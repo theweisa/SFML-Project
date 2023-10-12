@@ -47,6 +47,7 @@ class GameObject {
 
 		// accessors
 		const sf::Vector2f GetPosition() const { return sprite.getPosition(); }
+		const sf::Vector2f GetOriginPosition() const;
 		const bool GetEndOfAnimation(const std::string key);
 		const bool InsideBounds(sf::Vector2f);
 };

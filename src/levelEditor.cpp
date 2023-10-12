@@ -1,10 +1,10 @@
 #include "levelEditor.h"
+#include <filesystem>
 
 LevelEditor::LevelEditor() {
-    InitGrid(8, 8, sf::Vector2f(25.f, 25.f), sf::Vector2f(25.f, 25.f));
+    InitGrid(32, 32, sf::Vector2f(25.f, 25.f), sf::Vector2f(25.f, 25.f));
     InitAssets();
     currentTiles.push_back(new GameObject("1", assets["test tile"], unitDimensions));
-    //currentTiles.push_back(sf::RectangleShape(unitDimensions));
 }
 
 LevelEditor::~LevelEditor() {
@@ -32,7 +32,9 @@ void LevelEditor::InitGrid(int xDim, int yDim, sf::Vector2f newXMargins, sf::Vec
 
 void LevelEditor::InitAssets() {
     // cwd: "C:\\Users\\Andrew Wei\\Documents\\SFML-Project\\build\\bin\\Debug" lmao
-    const std::string assetPath = "../../../assets/textures/";
+    // mac: "/Users/andrewwei/Documents/SFML-Project/build/bin" idk
+    const std::string assetPath = "../../assets/textures/";
+    std::cout << std::filesystem::current_path() << std::endl;
     AddAsset("test tile", assetPath+"testTile.png");
     AddAsset("test tile 2", assetPath+"testTile2.png");
     AddAsset("eraser tile", assetPath+"eraser.png");
@@ -99,9 +101,9 @@ void LevelEditor::EraseTiles() {
     for (auto tile : currentTiles) {
         int objIndex = 0;
         for (auto *obj : gameObjects["tiles"]) {
-            if (obj->InsideBounds(tile->GetPosition())) {
+            if (obj->InsideBounds(tile->GetPosition()+(unitDimensions/2.f))) {
                 DeleteGameObject("tiles", objIndex);
-                objIndex--;
+                break;
             }
             else {
                 objIndex++;
