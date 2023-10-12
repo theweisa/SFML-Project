@@ -106,6 +106,7 @@ bool Game::DeleteGameObject(GameObject* delObj) {
             objIndex++;
         }
     }
+    return false;
 }
 
 bool Game::DeleteGameObject(std::string key, int index) {

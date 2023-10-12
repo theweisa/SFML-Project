@@ -22,6 +22,7 @@ class GameObject {
 		sf::Sprite sprite;
 		sf::Vector2f dimensions;
 		std::unordered_map<std::string, Animation*> animations;
+		sf::Vector2f localPosition;
 
 		// methods
 		GameObject();
@@ -39,6 +40,8 @@ class GameObject {
 		void AddAnimation(std::string key, sf::Texture & spriteSheet, float fps, int startFrameX, int endFramesX, int startFrameY, int endFramesY, int newWidth, int newHeight);
 
 		void SetPosition(sf::Vector2f newPos);
+		void SetLocalPosition(sf::Vector2f newLocal);
+		void SetSpriteDimensions(sf::Vector2f);
 		void SetPosition(float newX, float newY);
 		void SetRotation(float newAngle);
 		void SetTexture(const sf::Texture*);
@@ -46,8 +49,7 @@ class GameObject {
 		void SetTexture(sf::Texture*);
 
 		// accessors
-		const sf::Vector2f GetPosition() const { return sprite.getPosition(); }
-		const sf::Vector2f GetOriginPosition() const;
+		const sf::Vector2f GetPosition() const { return sprite.getPosition()+localPosition; }
 		const bool GetEndOfAnimation(const std::string key);
 		const bool InsideBounds(sf::Vector2f);
 };

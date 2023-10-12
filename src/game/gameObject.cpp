@@ -1,5 +1,8 @@
 #include "gameObject.h"
 
+GameObject::GameObject() {
+    localPosition = sf::Vector2f(0.f,0.f);
+}
 GameObject::GameObject(std::string newId, sf::Texture* objectTexture) : id(newId) {
     //set the animations sprite to the texture
     texture = *objectTexture;
@@ -9,15 +12,18 @@ GameObject::GameObject(std::string newId, sf::Texture* objectTexture, sf::Vector
     //set the animations sprite to the texture
     texture = *objectTexture;
 	sprite.setTexture(*objectTexture, true);
-    sprite.setScale(sf::Vector2f(pxScale.x/sprite.getLocalBounds().width, pxScale.y/sprite.getLocalBounds().height));
+    SetSpriteDimensions(pxScale);
 }
 GameObject::GameObject(std::string newId, Animation* defaultAnim) : id(newId) {
     animations["default"] = defaultAnim;
 }
 GameObject::GameObject(const GameObject& rhObj) {
     this->id = rhObj.id;
+    this->texture = rhObj.texture;
     this->sprite = rhObj.sprite;
+    this->dimensions = rhObj.dimensions;
     this->animations = rhObj.animations;
+    this->localPosition = rhObj.localPosition;
 }
 
 GameObject::~GameObject() {
@@ -46,18 +52,22 @@ void GameObject::Update(float deltaTime) {
 }
 
 void GameObject::SetPosition(sf::Vector2f newPos) {
-    sprite.setPosition(newPos);
+    sprite.setPosition(newPos+localPosition);
 }
 
 void GameObject::SetPosition(float newX, float newY) {
-    sprite.setPosition(newX, newY);
+    sprite.setPosition(newX+localPosition.x, newY+localPosition.y);
 }
-const sf::Vector2f GameObject::GetOriginPosition() const {
-    return sf::Vector2f(
-        sprite.getPosition().x + sprite.getLocalBounds().width/2,
-        sprite.getPosition().y + sprite.getLocalBounds().height/2
-    );
+
+void GameObject::SetSpriteDimensions(sf::Vector2f pxScale) {
+    sprite.setScale(sf::Vector2f(pxScale.x/sprite.getLocalBounds().width, pxScale.y/sprite.getLocalBounds().height));
 }
+
+void GameObject::SetLocalPosition(sf::Vector2f newLocal) {
+    localPosition = newLocal;
+    SetPosition(GetPosition());
+}
+
 void GameObject::SetTexture(sf::Texture* txtr, sf::Vector2f pxScale) {
     SetTexture(txtr);
     sprite.setScale(sf::Vector2f(pxScale.x/sprite.getLocalBounds().width, pxScale.y/sprite.getLocalBounds().height));

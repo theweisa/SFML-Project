@@ -48,7 +48,7 @@ public:
     const bool Running() const;
     //time it takes to update and render one frame
     void UpdateDeltaTime();
-    void UpdatePollEvents();
+    virtual void UpdatePollEvents();
     void UpdateGameObjects();
     void UpdateMousePos();
     virtual void UpdateInputs();
