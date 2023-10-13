@@ -232,6 +232,7 @@ void LevelEditor::UpdatePallete() {
 void LevelEditor::SetBrush(std::string id) {
     for (auto& tile : gameObjects["pallete"]) {
         if (tile->id == id) {
+            std::cout << "brush: " << id << std::endl;
             // highlight the tile idk how for now
             for (auto& brush : gameObjects["brush"]) {
                 brush->SetTexture(tile->sprite.getTexture());

@@ -20,6 +20,7 @@ class GameObject {
 		std::string id;
 		sf::Texture texture;
 		sf::Sprite sprite;
+		sf::Vector2f scale;
 		sf::Vector2f dimensions;
 		std::unordered_map<std::string, Animation*> animations;
 		sf::Vector2f localPosition;

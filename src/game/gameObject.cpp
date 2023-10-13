@@ -15,6 +15,7 @@ GameObject::GameObject(const GameObject& rhObj) {
     this->texture = rhObj.texture;
     this->sprite = rhObj.sprite;
     this->dimensions = rhObj.dimensions;
+    this->scale = rhObj.scale;
     this->animations = rhObj.animations;
     this->localPosition = rhObj.localPosition;
 }
@@ -53,9 +54,10 @@ void GameObject::SetPosition(float newX, float newY) {
 }
 
 void GameObject::SetSpriteDimensions(sf::Vector2f pxScale) {
-    sprite.setTexture(texture, true);
-    dimensions = sf::Vector2f(pxScale.x/sprite.getLocalBounds().width, pxScale.y/sprite.getLocalBounds().height);
-    sprite.setScale(dimensions);
+    //sprite.rect
+    dimensions = pxScale;
+    scale = sf::Vector2f(pxScale.x/sprite.getLocalBounds().width, pxScale.y/sprite.getLocalBounds().height);
+    sprite.setScale(scale);
 }
 
 void GameObject::SetLocalPosition(sf::Vector2f newLocal) {
@@ -71,11 +73,13 @@ void GameObject::SetTexture(sf::Texture* txtr, sf::Vector2f pxScale) {
 void GameObject::SetTexture(const sf::Texture * txtr) {
     texture = *txtr;
     sprite.setTexture(*txtr, true);
+    SetSpriteDimensions(dimensions);
 }
 
 void GameObject::SetTexture(sf::Texture* txtr) {
     texture = *txtr;
     sprite.setTexture(*txtr, true);
+    SetSpriteDimensions(dimensions);
 }
 
 const bool GameObject::InsideBounds(sf::Vector2f pos) {
