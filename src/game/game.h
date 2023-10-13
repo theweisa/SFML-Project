@@ -26,6 +26,8 @@ protected:
 
     // assets
     std::unordered_map<std::string, sf::Texture*> assets;
+    sf::Font font;
+    std::unordered_map<std::string, sf::Text*> text;
 
     // mouse pos
     sf::Vector2i mousePosWindow;
@@ -54,7 +56,11 @@ public:
     void UpdateMousePos();
     virtual void UpdateInputs();
     void AddAsset(const std::string, const std::string);
+    void AddFont(const std::string, const std::string);
+    sf::Text* CreateText(const std::string initialText, unsigned charSize, sf::Vector2f initialPos, const std::string key, sf::Color color=sf::Color::White);
+
     std::vector<GameObject*> PositionOverGameObjects(sf::Vector2f);
+    void CenterText(sf::Text*);
     bool DeleteGameObject(GameObject*);
     bool DeleteGameObject(std::string, int);
 

@@ -35,7 +35,7 @@ void Game::InitWindow() {
 
     //set the resolution of the game
     videoMode.height = 960;
-    videoMode.width = 960;
+    videoMode.width = 1024;
     window = new sf::RenderWindow(videoMode, "Game", sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize); //dynamically allocate mem for window
 
     windowHeight = static_cast<float>(window->getSize().y);
@@ -82,6 +82,37 @@ void Game::AddAsset(const std::string key, const std::string fileName) {
 		std::cout << "ERROR: failed to load " << fileName << std::endl;
 	}
 }
+
+void Game::AddFont(const std::string key, const std::string fileName) {
+    //fonts[key] = new sf::Font();
+	if (font.loadFromFile(fileName)) {
+		std::cout << "ERROR: failed to load " << fileName << std::endl;
+	}
+}
+
+void Game::CenterText(sf::Text* text) {
+    //std::cout << text["key"] << std::endl;
+    
+    sf::FloatRect textRect = text->getLocalBounds();
+    text->setOrigin(
+        textRect.left + textRect.width/2.0f,
+        textRect.top  + textRect.height/2.0f
+    );
+    return;
+    
+}
+
+sf::Text* Game::CreateText(const std::string initialText, unsigned charSize, sf::Vector2f initialPos, const std::string key, sf::Color color) {
+    sf::Text* newText = new sf::Text;
+	text[key] = newText;			        //create new text
+	newText->setFont(font);					//set the font
+	newText->setCharacterSize(charSize);		//set the text character size
+	newText->setFillColor(color);			//set the text color
+	newText->setString(initialText);			//set the string
+	newText->setPosition(initialPos);		//set the initial position
+    return newText;
+}
+
 
 std::vector<GameObject*> Game::PositionOverGameObjects(sf::Vector2f pos) {
     std::vector<GameObject*> hoveredObjs;

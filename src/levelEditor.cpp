@@ -1,17 +1,36 @@
 #include "levelEditor.h"
 
 LevelEditor::LevelEditor() {
-    InitGrid(32, 32, sf::Vector2f(25.f, 125.f), sf::Vector2f(25.f, 25.f));
+    // 1024, 960
+    // 1024-(250+25) vs 960-(25+25)
+    // choose the smaller one, then set the opposing margins to even ones
+    InitGrid(32, 32, sf::Vector2f(25.f, 250.f), sf::Vector2f(10.f, 40.f), true);
     InitAssets();
+    InitText();
     InitPallete();
-    gameObjects["brush"].push_back(new GameObject("1", assets["test tile 2"]));
-    gameObjects["brush"].back()->SetSpriteDimensions(unitDimensions);
+    SetBrush("1");
 }
 
 LevelEditor::~LevelEditor() {
     
 }
-void LevelEditor::InitGrid(int xDim, int yDim, sf::Vector2f newXMargins, sf::Vector2f newYMargins) {
+void LevelEditor::InitGrid(int xDim, int yDim, sf::Vector2f newXMargins, sf::Vector2f newYMargins, bool squareGrid) {
+    if (squareGrid) {
+        float xMag = windowWidth-(newXMargins.x+newXMargins.y);
+        float yMag = windowHeight-(newYMargins.x+newYMargins.y);
+        if (xMag < yMag) {
+            newYMargins = sf::Vector2f(
+                (windowHeight-xMag)*(newYMargins.x/(newYMargins.x+newYMargins.y)), 
+                (windowHeight-xMag)*(newYMargins.y/(newYMargins.x+newYMargins.y))
+            );
+        }
+        else if (yMag < xMag) {
+            newXMargins = sf::Vector2f(
+                (windowWidth-yMag)*(newXMargins.x/(newXMargins.x+newXMargins.y)), 
+                (windowWidth-yMag)*(newXMargins.x/(newXMargins.x+newXMargins.y))
+            );
+        }
+    }
     gridDimensions = sf::Vector2i(xDim, yDim);
     xMargins = newXMargins;
     yMargins = newYMargins;
@@ -31,18 +50,26 @@ void LevelEditor::InitGrid(int xDim, int yDim, sf::Vector2f newXMargins, sf::Vec
     }
 }
 
+void LevelEditor::InitText() {
+    //sf::Font test;
+    //test.loadFromFile("../../../assets/fonts/04B_30__.TTF");
+    sf::Text* txt = CreateText("Tile Pallete", 22, sf::Vector2f(windowWidth-(xMargins.y/2)-unitDimensions.x/2, yMargins.x-unitDimensions.y*0), "palleteTxt");
+    CenterText(txt);
+}
+
 void LevelEditor::InitAssets() {
-    std::string assetPath = "../../../assets/textures/";
+    std::string assetPath = "../../../assets/";
     #if _WIN32
-        assetPath = "../../../assets/textures/";
+        assetPath = "../../../assets/";
     #elif __APPLE__
-        assetPath = "../../assets/textures/";
+        assetPath = "../../assets/";
     #endif
     // cwd: "C:\\Users\\Andrew Wei\\Documents\\SFML-Project\\build\\bin\\Debug" lmao
     // mac: "/Users/andrewwei/Documents/SFML-Project/build/bin" idk
-    AddAsset("test tile", assetPath+"testTile.png");
-    AddAsset("test tile 2", assetPath+"testTile2.png");
-    AddAsset("eraser tile", assetPath+"eraser.png");
+    AddAsset("test tile", assetPath+"textures/testTile.png");
+    AddAsset("test tile 2", assetPath+"textures/testTile2.png");
+    AddAsset("eraser tile", assetPath+"textures/eraser.png");
+    AddFont("default", assetPath+"fonts/04B_30__.TTF");
 }
 
 void LevelEditor::InitPallete() {
@@ -51,8 +78,9 @@ void LevelEditor::InitPallete() {
     for (auto& asset : assets) {
         if (asset.first == "eraser tile") continue; // teehee
         sf::Vector2f newPos = sf::Vector2f(
-            windowWidth-(xMargins.y/(numCols+1))-unitDimensions.x/2, yMargins.x+palleteId*unitDimensions.y
+            windowWidth-(xMargins.y/(numCols+1))-unitDimensions.x/2, yMargins.x+(1+palleteId)*unitDimensions.y
         );
+        CreateText(std::to_string(palleteId), 12, sf::Vector2f(newPos.x-unitDimensions.x, newPos.y), std::to_string(palleteId)+"Pallete");
         gameObjects["pallete"].push_back(new GameObject(std::to_string(palleteId), asset.second, newPos));
         gameObjects["pallete"].back()->SetSpriteDimensions(unitDimensions);
         palleteId++;
@@ -230,6 +258,10 @@ void LevelEditor::UpdatePallete() {
 }
 
 void LevelEditor::SetBrush(std::string id) {
+    if (gameObjects["brush"].empty()) {
+        gameObjects["brush"].push_back(new GameObject(*gameObjects["pallete"].front()));
+        return;
+    }
     for (auto& tile : gameObjects["pallete"]) {
         if (tile->id == id) {
             std::cout << "brush: " << id << std::endl;
@@ -259,5 +291,8 @@ void LevelEditor::Render() {
     }
     for (auto& tile : gameObjects["brush"]) {
         tile->Render(*window);
+    }
+    for (auto txt : text) {
+        window->draw(*txt.second);
     }
 }

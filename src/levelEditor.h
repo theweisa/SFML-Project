@@ -16,8 +16,9 @@ class LevelEditor : public Game {
     public:
         LevelEditor();
         ~LevelEditor();
-        void InitGrid(int, int, sf::Vector2f, sf::Vector2f);
+        void InitGrid(int, int, sf::Vector2f, sf::Vector2f, bool squareGrid=false);
         void InitAssets() override;
+        void InitText();
         void InitPallete();
         sf::Vector2f GetRelativeGridPosition(sf::Vector2f pos);
         void PlaceTiles();
