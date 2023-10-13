@@ -34,8 +34,8 @@ void Game::InitWindow() {
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
 
     //set the resolution of the game
-    videoMode.height = 512;
-    videoMode.width = 512;
+    videoMode.height = 960;
+    videoMode.width = 960;
     window = new sf::RenderWindow(videoMode, "Game", sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize); //dynamically allocate mem for window
 
     windowHeight = static_cast<float>(window->getSize().y);

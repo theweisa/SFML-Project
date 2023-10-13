@@ -1,11 +1,11 @@
 #include "levelEditor.h"
-#include <filesystem>
-#include <cmath>
 
 LevelEditor::LevelEditor() {
-    InitGrid(32, 32, sf::Vector2f(25.f, 25.f), sf::Vector2f(25.f, 25.f));
+    InitGrid(32, 32, sf::Vector2f(25.f, 125.f), sf::Vector2f(25.f, 25.f));
     InitAssets();
-    currentTiles.push_back(new GameObject("1", assets["test tile"], unitDimensions));
+    InitPallete();
+    gameObjects["brush"].push_back(new GameObject("1", assets["test tile 2"]));
+    gameObjects["brush"].back()->SetSpriteDimensions(unitDimensions);
 }
 
 LevelEditor::~LevelEditor() {
@@ -44,10 +44,25 @@ void LevelEditor::InitAssets() {
     AddAsset("test tile 2", assetPath+"testTile2.png");
     AddAsset("eraser tile", assetPath+"eraser.png");
 }
+
+void LevelEditor::InitPallete() {
+    int palleteId = 1;
+    int numCols = 1;
+    for (auto& asset : assets) {
+        if (asset.first == "eraser tile") continue; // teehee
+        sf::Vector2f newPos = sf::Vector2f(
+            windowWidth-(xMargins.y/(numCols+1))-unitDimensions.x/2, yMargins.x+palleteId*unitDimensions.y
+        );
+        gameObjects["pallete"].push_back(new GameObject(std::to_string(palleteId), asset.second, newPos));
+        gameObjects["pallete"].back()->SetSpriteDimensions(unitDimensions);
+        palleteId++;
+    }
+}
+
 sf::Vector2f LevelEditor::GetRelativeGridPosition(sf::Vector2f pos) {
     sf::Vector2i unitPos = sf::Vector2i((pos.x-xMargins.x) / unitDimensions.x, (pos.y-yMargins.x) / unitDimensions.y);
     sf::Vector2f gridPos = sf::Vector2f(
-        std::clamp(xMargins.x+unitPos.x * unitDimensions.x, xMargins.x, windowWidth-xMargins.x-unitDimensions.x),
+        std::clamp(xMargins.x+unitPos.x * unitDimensions.x, xMargins.x, windowWidth-xMargins.y-unitDimensions.x),
         std::clamp(yMargins.x+unitPos.y * unitDimensions.y, yMargins.x, windowHeight-yMargins.y-unitDimensions.y)
     );
     //std::cout << "Unit pos: (" << unitPos.x << ", " << unitPos.y << ")" << std::endl;
@@ -75,11 +90,13 @@ void LevelEditor::UpdateInputs() {
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
         toolState = Brush;
-        SetCurrentTileTextures(assets["test tile"], "1");
+        SetBrush("1");
+        //SetCurrentTileTextures(assets["test tile"], "1");
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
         toolState = Brush;
-        SetCurrentTileTextures(assets["test tile 2"], "2");
+        SetBrush("2");
+        //SetCurrentTileTextures(assets["test tile 2"], "2");
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
         toolState = Erase;
@@ -97,8 +114,12 @@ void LevelEditor::UpdateInputs() {
 
 void LevelEditor::PlaceTiles() {
     EraseTiles();
-    for (auto tile : currentTiles) {
-        if (tile->GetPosition().x < xMargins.x || tile->GetPosition().x > windowWidth-xMargins.x || tile->GetPosition().y < yMargins.x || tile->GetPosition().y > windowHeight-yMargins.y) {
+    for (auto tile : gameObjects["brush"]) {
+        if (tile->GetPosition().x < xMargins.x-unitDimensions.x/2 
+            || tile->GetPosition().x > windowWidth-xMargins.y-unitDimensions.x/2 
+            || tile->GetPosition().y < yMargins.x-unitDimensions.y/2 
+            || tile->GetPosition().y > windowHeight-yMargins.y-unitDimensions.y/2) 
+        {
             continue;
         }
         gameObjects["tiles"].push_back(new GameObject(*tile));
@@ -107,39 +128,30 @@ void LevelEditor::PlaceTiles() {
 
 // idk ill work on you more later
 void LevelEditor::EraseTiles() {
-    std::cout << "tiles: " << currentTiles.size() << std::endl;
-    for (auto tile : currentTiles) {
+    //std::cout << "tiles: " << gameObjects["brush"].size() << std::endl;
+    int numDeleted = 0;
+    int numTiles = 0;
+    for (auto tile : gameObjects["brush"]) {
+        numTiles++;
         int objIndex = 0;
         for (auto itr = gameObjects["tiles"].begin(); itr != gameObjects["tiles"].end(); itr++) {
-            if ((*itr)->GetPosition() == tile->GetPosition()) {
+            if ((*itr)->InsideBounds(tile->GetPosition()+(unitDimensions/2.f))) {
                 delete (*itr);
+                numDeleted++;
                 gameObjects["tiles"].erase(itr);
                 break;
             }
         }
-        
-        /*for (auto &obj : gameObjects["tiles"]) {
-            if (obj->InsideBounds(tile->GetPosition()+(unitDimensions/2.f))) {
-                DeleteGameObject("tiles", objIndex);
-                break;
-            }
-            if (obj->GetPosition() == tile->GetPosition()) {
-                DeleteGameObject("tiles", objIndex);
-                break;
-            }
-            objIndex++;
-        }*/
     }
+    //std::cout << "total tiles: " << numTiles << std::endl;
+    //std::cout << "tiles deleted: " << numDeleted << std::endl;
 }
 
 void LevelEditor::EyedropTile() {
     for (auto *obj : gameObjects["tiles"]) {
         if (obj->InsideBounds(mousePosView)) {
-            std::cout << "eyedrop" << std::endl;
-            for (auto tile : currentTiles) {
-                tile->SetTexture(obj->sprite.getTexture());
-                tile->id = obj->id;
-            }
+            //std::cout << "eyedrop" << std::endl;
+            SetBrush(obj->id);
             toolState = Brush;
             return;
         }
@@ -147,33 +159,29 @@ void LevelEditor::EyedropTile() {
 }
 
 void LevelEditor::SetCurrentTileTextures(sf::Texture* newTexture, std::string newId) {
-    for (auto tile : currentTiles) {
+    for (auto tile : gameObjects["brush"]) {
         tile->SetTexture(newTexture, unitDimensions);
         if (newId != "") tile->id = newId;
     }
 }
 
 void LevelEditor::ChangeBrushSize(int newSize) {
-    if (newSize < 1 || newSize > std::min(gridDimensions.x, gridDimensions.y) || currentTiles.size() <= 0) {
+    if (newSize < 1 || newSize > std::min(gridDimensions.x, gridDimensions.y) || gameObjects["brush"].size() <= 0) {
         return;
     }
     brushSize = newSize;
-    std::cout << "new size: " << brushSize << std::endl;
-    GameObject * tile = new GameObject(*currentTiles[0]);
-    for (auto& t : currentTiles) {
+    //std::cout << "new size: " << brushSize << std::endl;
+    GameObject * tile = new GameObject(*gameObjects["brush"][0]);
+    for (auto& t : gameObjects["brush"]) {
         delete t;
     }
-    currentTiles.clear();
-    // GetRelativeGridPosition(mousePosView)
-    // what i have: current mouse grid position; can set the local positions to be based on it
-    // should be from -unitDim -> +unitDim; should be size / 2 rounded down; then go fr -result -> +result. has to be an int result; 
-    // ie.) 2: -2/2 = -1 -> 1
+    gameObjects["brush"].clear();
     for (int i = -brushSize/2; i < std::ceil(float(brushSize)/2.f); i++) {
         for (int j = -brushSize/2; j < std::ceil(float(brushSize)/2.f); j++) {
             GameObject * newTile = new GameObject(*tile);
             newTile->SetLocalPosition(sf::Vector2f(unitDimensions.x * i, unitDimensions.y * j));
             newTile->SetPosition(GetRelativeGridPosition(mousePosView));
-            currentTiles.push_back(newTile);
+            gameObjects["brush"].push_back(newTile);
         }
     }
     delete tile;
@@ -183,7 +191,7 @@ void LevelEditor::ChangeBrushSize(int newSize) {
 
 void LevelEditor::Update() {
     Game::Update();
-    for (auto tile : currentTiles) {
+    for (auto tile : gameObjects["brush"]) {
         tile->SetPosition(GetRelativeGridPosition(mousePosView));
     }
 }
@@ -195,7 +203,7 @@ void LevelEditor::UpdatePollEvents() {
                 window->close();
                 break;
             case sf::Event::MouseWheelScrolled:
-                std::cout << "scrolled: " << ev.mouseWheelScroll.delta << std::endl;
+                //std::cout << "scrolled: " << ev.mouseWheelScroll.delta << std::endl;
                 if (ev.mouseWheelScroll.delta > 0) {
                     ChangeBrushSize(brushSize+1);
                 }
@@ -209,15 +217,46 @@ void LevelEditor::UpdatePollEvents() {
 	}
 }
 
+void LevelEditor::UpdatePallete() {
+    if (gameObjects["brush"].size() <= 0) return;
+    GameObject* curBrush = gameObjects["brush"].back();
+    // find what pallete is being used currently thgouh curBrush id
+    for (auto& tile : gameObjects["pallete"]) {
+        if (tile->id == curBrush->id) {
+            // current pallete
+            break;
+        }
+    }
+}
+
+void LevelEditor::SetBrush(std::string id) {
+    for (auto& tile : gameObjects["pallete"]) {
+        if (tile->id == id) {
+            // highlight the tile idk how for now
+            for (auto& brush : gameObjects["brush"]) {
+                brush->SetTexture(tile->sprite.getTexture());
+                brush->id = tile->id;
+            }
+            return;
+        }
+    }
+}
+
 void LevelEditor::Render() {
     Game::Render();
     window->draw(grid);
-    for (auto objKey : gameObjects) {
+    /*for (auto objKey : gameObjects) {
         for (auto& obj : objKey.second) {
             obj->Render(*window);
         }
+    }*/
+    for (auto& tile : gameObjects["pallete"]) {
+        tile->Render(*window);
     }
-    for (auto& tile : currentTiles) {
+    for (auto& tile : gameObjects["tiles"]) {
+        tile->Render(*window);
+    }
+    for (auto& tile : gameObjects["brush"]) {
         tile->Render(*window);
     }
 }

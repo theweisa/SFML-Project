@@ -26,9 +26,7 @@ class GameObject {
 
 		// methods
 		GameObject();
-		GameObject(std::string, sf::Texture*);
-		GameObject(std::string, sf::Texture*, sf::Vector2f);
-		GameObject(std::string, Animation*);
+		GameObject(std::string, sf::Texture*, sf::Vector2f pxScale=sf::Vector2f(0,0));
 		GameObject(const GameObject&);
 		~GameObject();
 
@@ -49,7 +47,7 @@ class GameObject {
 		void SetTexture(sf::Texture*);
 
 		// accessors
-		const sf::Vector2f GetPosition() const { return sprite.getPosition()+localPosition; }
+		const sf::Vector2f GetPosition() const { return sprite.getPosition(); }
 		const bool GetEndOfAnimation(const std::string key);
 		const bool InsideBounds(sf::Vector2f);
 };

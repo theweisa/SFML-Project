@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <vector>
 #include <ostream>
+#include <cmath>
 
 #include "gameObject.h"
 

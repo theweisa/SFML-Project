@@ -3,19 +3,12 @@
 GameObject::GameObject() {
     localPosition = sf::Vector2f(0.f,0.f);
 }
-GameObject::GameObject(std::string newId, sf::Texture* objectTexture) : id(newId) {
+GameObject::GameObject(std::string newId, sf::Texture* objectTexture, sf::Vector2f pos) : id(newId) {
     //set the animations sprite to the texture
     texture = *objectTexture;
 	sprite.setTexture(*objectTexture, true);
-}
-GameObject::GameObject(std::string newId, sf::Texture* objectTexture, sf::Vector2f pxScale) : id(newId) {
-    //set the animations sprite to the texture
-    texture = *objectTexture;
-	sprite.setTexture(*objectTexture, true);
-    SetSpriteDimensions(pxScale);
-}
-GameObject::GameObject(std::string newId, Animation* defaultAnim) : id(newId) {
-    animations["default"] = defaultAnim;
+    sprite.setPosition(pos);
+    //SetSpriteDimensions(pxScale);
 }
 GameObject::GameObject(const GameObject& rhObj) {
     this->id = rhObj.id;
@@ -60,12 +53,14 @@ void GameObject::SetPosition(float newX, float newY) {
 }
 
 void GameObject::SetSpriteDimensions(sf::Vector2f pxScale) {
-    sprite.setScale(sf::Vector2f(pxScale.x/sprite.getLocalBounds().width, pxScale.y/sprite.getLocalBounds().height));
+    sprite.setTexture(texture, true);
+    dimensions = sf::Vector2f(pxScale.x/sprite.getLocalBounds().width, pxScale.y/sprite.getLocalBounds().height);
+    sprite.setScale(dimensions);
 }
 
 void GameObject::SetLocalPosition(sf::Vector2f newLocal) {
     localPosition = newLocal;
-    SetPosition(GetPosition());
+    SetPosition(GetPosition()+localPosition);
 }
 
 void GameObject::SetTexture(sf::Texture* txtr, sf::Vector2f pxScale) {
@@ -75,12 +70,12 @@ void GameObject::SetTexture(sf::Texture* txtr, sf::Vector2f pxScale) {
 
 void GameObject::SetTexture(const sf::Texture * txtr) {
     texture = *txtr;
-    sprite.setTexture(*txtr);
+    sprite.setTexture(*txtr, true);
 }
 
 void GameObject::SetTexture(sf::Texture* txtr) {
     texture = *txtr;
-    sprite.setTexture(*txtr);
+    sprite.setTexture(*txtr, true);
 }
 
 const bool GameObject::InsideBounds(sf::Vector2f pos) {
