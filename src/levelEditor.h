@@ -13,6 +13,7 @@ class LevelEditor : public Game {
         sf::Vector2f yMargins;
         int brushSize = 1;
         ToolState toolState=Brush;
+        std::string assetPath;
     public:
         LevelEditor();
         ~LevelEditor();
@@ -25,6 +26,7 @@ class LevelEditor : public Game {
         void EraseTiles();
         void EyedropTile();
         void SetCurrentTileTextures(sf::Texture*, std::string newId="");
+        void SetCurrentTileTextures(std::string);
         void SetBrush(std::string);
         void ChangeBrushSize(int);
         void Render() override;
@@ -32,6 +34,8 @@ class LevelEditor : public Game {
         void UpdatePollEvents() override;
         void UpdateInputs() override;
         void UpdatePallete();
+        void SaveToFile(std::string);
+        void LoadFile(std::string);
 };
 
 #endif

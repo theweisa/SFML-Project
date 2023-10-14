@@ -10,7 +10,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <ostream>
+#include <fstream>
 #include <cmath>
 
 #include "gameObject.h"

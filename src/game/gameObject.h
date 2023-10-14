@@ -25,6 +25,9 @@ class GameObject {
 		std::unordered_map<std::string, Animation*> animations;
 		sf::Vector2f localPosition;
 
+		// tmp
+		std::string texturePath;
+
 		// methods
 		GameObject();
 		GameObject(std::string, sf::Texture*, sf::Vector2f pxScale=sf::Vector2f(0,0));

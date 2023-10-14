@@ -6,8 +6,8 @@ LevelEditor::LevelEditor() {
     // choose the smaller one, then set the opposing margins to even ones
     InitGrid(32, 32, sf::Vector2f(25.f, 250.f), sf::Vector2f(10.f, 40.f), true);
     InitAssets();
-    InitText();
     InitPallete();
+    InitText();
     SetBrush("1");
 }
 
@@ -53,12 +53,13 @@ void LevelEditor::InitGrid(int xDim, int yDim, sf::Vector2f newXMargins, sf::Vec
 void LevelEditor::InitText() {
     //sf::Font test;
     //test.loadFromFile("../../../assets/fonts/04B_30__.TTF");
-    sf::Text* txt = CreateText("Tile Pallete", 22, sf::Vector2f(windowWidth-(xMargins.y/2)-unitDimensions.x/2, yMargins.x-unitDimensions.y*0), "palleteTxt");
-    CenterText(txt);
+    CenterText(CreateText("Tile Pallete", 22, sf::Vector2f(windowWidth-(xMargins.y/2), yMargins.x+unitDimensions.y), "palleteTxt"));
+    sf::Vector2f newPos = sf::Vector2f(gameObjects["pallete"].back()->GetPosition().x+10, gameObjects["pallete"].back()->GetPosition().y+200);
+    CenterText(CreateText("Brush: 1-8\n\nEraser: E\n\nEyedrop: I\n\nBrush Size: Scroll\n\nSave: Ctrl+S\n\nLoad: Ctrl+L", 14, newPos, "yo mama"));
+
 }
 
 void LevelEditor::InitAssets() {
-    std::string assetPath = "../../../assets/";
     #if _WIN32
         assetPath = "../../../assets/";
     #elif __APPLE__
@@ -66,8 +67,16 @@ void LevelEditor::InitAssets() {
     #endif
     // cwd: "C:\\Users\\Andrew Wei\\Documents\\SFML-Project\\build\\bin\\Debug" lmao
     // mac: "/Users/andrewwei/Documents/SFML-Project/build/bin" idk
-    AddAsset("test tile", assetPath+"textures/testTile.png");
-    AddAsset("test tile 2", assetPath+"textures/testTile2.png");
+    //AddAsset("testTile.png", assetPath+"textures/testTile.png");
+    //AddAsset("testTile2.png", assetPath+"textures/testTile2.png");
+    AddAsset("dirt", assetPath+"textures/dirt.png");
+    AddAsset("water", assetPath+"textures/water.png");
+    AddAsset("grassTree", assetPath+"textures/grassTree.png");
+    AddAsset("dirtTree", assetPath+"textures/dirtTree.png");
+    AddAsset("shroom", assetPath+"textures/shroom.png");
+    AddAsset("ship", assetPath+"textures/ship.png");
+    AddAsset("blueShroom", assetPath+"textures/blueShroom.png");
+    AddAsset("grass", assetPath+"textures/grass.png");
     AddAsset("eraser tile", assetPath+"textures/eraser.png");
     AddFont("default", assetPath+"fonts/04B_30__.TTF");
 }
@@ -116,15 +125,39 @@ void LevelEditor::UpdateInputs() {
                 break;
         }
     }
+    // there has to be a better way of doing this
+    // edit: idc im too lazy idc anymore, yandere dev here i come
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
         toolState = Brush;
         SetBrush("1");
-        //SetCurrentTileTextures(assets["test tile"], "1");
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
         toolState = Brush;
         SetBrush("2");
-        //SetCurrentTileTextures(assets["test tile 2"], "2");
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)) {
+        toolState = Brush;
+        SetBrush("3");
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) {
+        toolState = Brush;
+        SetBrush("4");
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5)) {
+        toolState = Brush;
+        SetBrush("5");
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num6)) {
+        toolState = Brush;
+        SetBrush("6");
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num7)) {
+        toolState = Brush;
+        SetBrush("7");
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num8)) {
+        toolState = Brush;
+        SetBrush("8");
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
         toolState = Erase;
@@ -132,11 +165,18 @@ void LevelEditor::UpdateInputs() {
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
         toolState = Brush;
-        SetCurrentTileTextures(assets["test tile"]);
+        SetCurrentTileTextures("1");
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::I)) {
         toolState = Eyedrop;
+        ChangeBrushSize(1);
         SetCurrentTileTextures(assets["eraser tile"]);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+        SaveToFile("map");
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::L) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+        LoadFile("map");
     }
 }
 
@@ -187,9 +227,30 @@ void LevelEditor::EyedropTile() {
 }
 
 void LevelEditor::SetCurrentTileTextures(sf::Texture* newTexture, std::string newId) {
+    for (auto tile : gameObjects["pallete"]) {
+        if (newId == tile->id) {
+            for (auto brush : gameObjects["brush"]) {
+                brush->SetTexture(tile->sprite.getTexture());
+                brush->id = newId;
+            }
+            return;
+        }
+    }
     for (auto tile : gameObjects["brush"]) {
         tile->SetTexture(newTexture, unitDimensions);
         if (newId != "") tile->id = newId;
+    }
+}
+
+void LevelEditor::SetCurrentTileTextures(std::string newId) {
+    for (auto tile : gameObjects["pallete"]) {
+        if (newId == tile->id) {
+            for (auto brush : gameObjects["brush"]) {
+                brush->SetTexture(tile->sprite.getTexture());
+                brush->id = newId;
+            }
+            return;
+        }
     }
 }
 
@@ -239,6 +300,17 @@ void LevelEditor::UpdatePollEvents() {
                     ChangeBrushSize(brushSize-1);
                 }
                 break;
+            /*case sf::Event::TextEntered {
+                int num = ev.text.unicode-48;
+                std::cout << ev.text.unicode << std::endl;
+                break;
+                if (num-48 >= 0 && num-48 < 58) {
+                    toolState = Brush;
+                    //std::cout << "switch to " << num << std::endl;
+                    SetBrush(std::to_string(num));
+                }
+                break;
+            }*/
             default:
                 break;
         }
@@ -273,6 +345,7 @@ void LevelEditor::SetBrush(std::string id) {
             return;
         }
     }
+    std::cout << "could not find id " << id << std::endl;
 }
 
 void LevelEditor::Render() {
@@ -294,5 +367,56 @@ void LevelEditor::Render() {
     }
     for (auto txt : text) {
         window->draw(*txt.second);
+    }
+}
+
+void LevelEditor::SaveToFile(std::string fileName) {
+    std::string filePath = assetPath + "../saveFiles/" + fileName + ".txt";
+    std::ofstream saveFile;
+    saveFile.open(filePath, std::ios::out);
+    if (!saveFile) {
+        std::cout << "fuck" << std::endl;
+        return;
+    }
+    for (auto tile : gameObjects["tiles"]) {
+        //std::cout << "tile id: " << tile->id << std::endl;
+        saveFile << std::to_string(tile->GetPosition().x) << "," << std::to_string(tile->GetPosition().y) << "," << tile->id << "\n";
+    }
+    saveFile.close();
+}
+
+// holy mother of pearl im sorry for the abominations I commited in this function
+void LevelEditor::LoadFile(std::string fileName) {
+    std::string filePath = assetPath + "../saveFiles/" + fileName + ".txt";
+    std::ifstream saveFile;
+    for (auto& tile : gameObjects["tiles"]) {
+        delete tile;
+    }
+    gameObjects["tiles"].clear();
+    saveFile.open(filePath, std::ios::in);
+    if (!saveFile) {
+        std::cout << "fuck" << std::endl;
+        return;
+    }
+    std::string line;
+    while (std::getline(saveFile, line)) {
+        std::string token;
+        size_t pos;
+        std::vector<std::string> elems;
+        while((pos = line.find(',')) != std::string::npos) {
+            token = line.substr(0, pos);
+            elems.push_back(token);
+            line.erase(0, pos+1);
+            //std::cout << token << ", ";
+        }
+        elems.push_back(line);
+        //std::cout << "new id: " << elems[2] << std::endl;
+        for (auto& p : gameObjects["pallete"]) {
+            if (p->id != elems[2]) continue;
+            GameObject* obj = new GameObject(*p);
+            obj->SetPosition(sf::Vector2f(std::stof(elems[0]), std::stof(elems[1])));
+            gameObjects["tiles"].push_back(obj);
+            break;
+        }
     }
 }
