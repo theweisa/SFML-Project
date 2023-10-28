@@ -9,7 +9,19 @@ class Particle : public GameObject {
         float lifetimeTimer;
         float speed;
         sf::Vector2f direction;
-    
+
+        sf::CircleShape * shape;
+
+        Particle(float, float, sf::Vector2f, float);
+        ~Particle();
+
+        void Update(float) override;
+        void UpdatePosition(float);
+        void UpdateSpeed(float);
+        void UpdateTimer(float);
+        bool DeleteParticle();
+
+        void Render(sf::RenderTarget&) override;
 };
 
 #endif

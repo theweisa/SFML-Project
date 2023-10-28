@@ -12,6 +12,7 @@
 #include <vector>
 #include <fstream>
 #include <cmath>
+#include <stdlib.h>
 
 #include "gameObject.h"
 
@@ -44,7 +45,7 @@ public:
     Game();
     ~Game();
     void Run();
-    virtual void InitAssets() = 0;
+    virtual void InitAssets() {};
     virtual void Update();
     virtual void Render();
     void InitWindow();

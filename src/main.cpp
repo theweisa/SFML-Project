@@ -2,6 +2,8 @@
 
 int main()
 {
-    //ParticleEmitter game;
+    srand(static_cast<unsigned>(time(0)));
+    ParticleEmitter game;
+    game.Run();
     return 0;
 }
