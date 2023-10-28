@@ -12,6 +12,7 @@ FetchContent_MakeAvailable(SFML)
 add_executable(
     CMakeSFMLProject src/main.cpp
     src/game/animation.h src/game/animation.cpp src/game/game.h src/game/game.cpp src/game/gameObject.h src/game/gameObject.cpp
+    src/particleEmitter.h src/particle.h
 )
 target_link_libraries(CMakeSFMLProject PRIVATE sfml-graphics)
 target_compile_features(CMakeSFMLProject PRIVATE cxx_std_17)
