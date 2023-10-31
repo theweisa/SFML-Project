@@ -10,6 +10,7 @@ random size, directions, velocities, and lifetimes where the player clicks
 class ParticleEmitter : public Game {
     public:
         ParticleEmitter();
+        void Render() override;
 };
 
 #endif

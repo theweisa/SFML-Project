@@ -12,7 +12,7 @@ class Particle : public GameObject {
 
         sf::CircleShape * shape;
 
-        Particle(float, float, sf::Vector2f, float);
+        Particle(sf::Vector2f, float, float, sf::Vector2f, float);
         ~Particle();
 
         void Update(float) override;

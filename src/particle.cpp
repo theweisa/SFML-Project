@@ -1,9 +1,9 @@
 #include "particle.h"
 
-Particle::Particle(float life, float speed, sf::Vector2f dir, float radius) 
+Particle::Particle(sf::Vector2f pos, float life, float speed, sf::Vector2f dir, float radius) 
 : lifetime(life), lifetimeTimer(life), speed(speed), direction(dir) {
-    shape = new sf::CircleShape(100);
-    shape->setPosition(sf::Vector2f(0,0));
+    shape = new sf::CircleShape(radius);
+    shape->setPosition(pos);
     shape->setFillColor(sf::Color::White);
 }
 Particle::~Particle() {
@@ -23,6 +23,5 @@ bool Particle::DeleteParticle() {
 }
 
 void Particle::Render(sf::RenderTarget& target) {
-    std::cout << "render" << std::endl;
     target.draw(*shape);
 }

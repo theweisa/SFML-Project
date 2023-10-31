@@ -9,5 +9,12 @@ ParticleEmitter::ParticleEmitter() {
     float randSize = rand() % 4;
     std::cout << "lmao" << std::endl;
     
-    gameObjects["particles"].push_back(new Particle(randLife, randSpeed, randDir, randSize));
+    gameObjects["particles"].push_back(new Particle(GetMousePosView(), randLife, randSpeed, randDir, randSize));
+}
+
+void ParticleEmitter::Render() {
+    Game::Render();
+    for (auto& p : gameObjects["particles"]) {
+        p->Render(*window);
+    }
 }
