@@ -1,7 +1,7 @@
 #include "game.h"
 
 Game::Game() {
-    InitWindow();
+    InitWindow(896, 960);
 }
 
 Game::~Game() {
@@ -30,12 +30,12 @@ void Game::Update() {
 void Game::Render() {
     window->clear();
 }
-void Game::InitWindow() {
+void Game::InitWindow(float height, float width) {
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
 
     //set the resolution of the game
-    videoMode.height = 896;
-    videoMode.width = 960;
+    videoMode.height = height;
+    videoMode.width = width;
     window = new sf::RenderWindow(videoMode, "Game", sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize); //dynamically allocate mem for window
 
     windowHeight = static_cast<float>(window->getSize().y);

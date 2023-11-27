@@ -47,7 +47,7 @@ public:
     virtual void InitAssets() = 0;
     virtual void Update();
     virtual void Render();
-    void InitWindow();
+    void InitWindow(float, float);
     const bool Running() const;
     //time it takes to update and render one frame
     void UpdateDeltaTime();
