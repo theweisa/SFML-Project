@@ -4,7 +4,8 @@
 #include "../game/game.h"
 
 class Pong : public Game {
-
+public:
+    void Update() override;
 };
 
 #endif

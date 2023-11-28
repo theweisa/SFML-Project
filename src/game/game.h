@@ -25,6 +25,7 @@ protected:
     float windowHeight;
 
     // assets
+    std::string assetsPath;
     std::unordered_map<std::string, sf::Texture*> assets;
     sf::Font font;
     std::unordered_map<std::string, sf::Text*> text;
@@ -44,7 +45,7 @@ public:
     Game();
     ~Game();
     void Run();
-    virtual void InitAssets() {};
+    virtual void InitAssets();
     virtual void Update();
     virtual void Render();
     void InitWindow(float, float);
@@ -52,9 +53,12 @@ public:
     //time it takes to update and render one frame
     void UpdateDeltaTime();
     virtual void UpdatePollEvents();
-    void UpdateGameObjects();
+    virtual void UpdateGameObjects();
+    virtual void UpdateObjectPhysics(GameObject&);
     void UpdateMousePos();
     virtual void UpdateInputs();
+    bool ExitedScreen(GameObject&, sf::Vector2f=sf::Vector2f(0,0));
+    virtual void OnScreenExit(GameObject&) {};
     void AddAsset(const std::string, const std::string);
     void AddFont(const std::string, const std::string);
     sf::Text* CreateText(const std::string initialText, unsigned charSize, sf::Vector2f initialPos, const std::string key, sf::Color color=sf::Color::White);

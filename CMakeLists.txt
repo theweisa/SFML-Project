@@ -11,7 +11,7 @@ FetchContent_MakeAvailable(SFML)
 
 add_executable(
     CMakeSFMLProject src/main.cpp
-    src/game/animation.h src/game/animation.cpp src/game/game.h src/game/game.cpp src/game/gameObject.h src/game/gameObject.cpp
+    src/game/animation.h src/game/animation.cpp src/game/game.h src/game/game.cpp src/game/physicsBody.h src/game/physicsBody.cpp src/game/gameObject.h src/game/gameObject.cpp 
     src/pong/pong.h src/pong/pong.cpp src/pong/paddle.h src/pong/paddle.cpp src/pong/ball.h src/pong/ball.cpp
 )
 target_link_libraries(CMakeSFMLProject PRIVATE sfml-graphics)

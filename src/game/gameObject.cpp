@@ -3,7 +3,7 @@
 GameObject::GameObject() {
     localPosition = sf::Vector2f(0.f,0.f);
 }
-GameObject::GameObject(std::string newId, sf::Texture* objectTexture, sf::Vector2f pos) : id(newId) {
+GameObject::GameObject(sf::Texture* objectTexture, sf::Vector2f pos) {
     //set the animations sprite to the texture
     texture = *objectTexture;
 	sprite.setTexture(*objectTexture, true);
@@ -24,6 +24,11 @@ GameObject::~GameObject() {
     for (auto itr = animations.begin(); itr != animations.end(); itr++) {
         delete itr->second;
     }
+    delete body;
+}
+
+void GameObject::AddPhysicsBody(PhysicsBody* body) {
+    this->body = body;
 }
 
 void GameObject::AddAnimation(std::string key, sf::Texture & spriteSheet, float newSpeed, int startFrameX, int startFrameY, int endFramesX, int endFramesY, int newWidth, int newHeight)
@@ -42,7 +47,20 @@ void GameObject::Render(sf::RenderTarget& target) {
 }
 
 void GameObject::Update(float deltaTime) {
-    
+    UpdatePhysicsBody(deltaTime);
+}
+
+void GameObject::UpdatePhysicsBody(float deltaTime) {
+    if (body == nullptr) return;
+    body->Update(deltaTime);
+}
+
+void GameObject::SetHitbox(sf::FloatRect& hitbox) {
+    this->hitbox = hitbox;
+}
+
+void GameObject::SetHitbox(float width, float height) {
+    SetHitbox(sf::FloatRect(width, height, 0, 0));
 }
 
 void GameObject::SetPosition(sf::Vector2f newPos) {

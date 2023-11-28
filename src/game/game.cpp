@@ -44,6 +44,9 @@ void Game::InitWindow(float height, float width) {
     //set the max frame rate
     window->setFramerateLimit(60);
 }
+void Game::InitAssets() {
+    
+}
 const bool Game::Running() const {
     return window->isOpen();
 }
@@ -65,9 +68,34 @@ void Game::UpdateGameObjects() {
     for (auto objVec : gameObjects) {
         for (auto& obj : objVec.second) {
             obj->Update(deltaTime);
+            UpdateObjectPhysics(*obj);
         }
     }
 }
+
+bool Game::ExitedScreen(GameObject &object, sf::Vector2f offset) {
+    return object.GetPosition().y < offset.y || object.GetPosition().y >= windowHeight - offset.y || object.GetPosition().x < offset.x || object.GetPosition().x >= windowWidth - offset.x;
+}
+
+void Game::UpdateObjectPhysics(GameObject &object) {
+    if (object.body == nullptr) return;
+    object.body->Update(deltaTime);
+    // this inefficient as hell but im curious if there's better ways to do it
+    for (auto objVec : gameObjects) {
+        for (auto& obj : objVec.second) {
+            if (object.body == nullptr || !(object.body->GetGlobalHitbox().intersects(obj->body->GetGlobalHitbox()))) {// || !object.body->interactableLayers[obj.body.layer]) {
+                continue;
+            }
+            if (object.body->trigger) {
+                object.body->OnTriggerEnter(*(obj->body));
+            }
+            else {
+                object.body->OnCollisionEnter(*(obj->body));
+            }
+        }
+    }
+}
+
 void Game::UpdateInputs() {
     
 }
