@@ -3,6 +3,8 @@
 PhysicsBody::PhysicsBody(GameObject* _host, BodyType _type, sf::FloatRect& _hitbox) 
 : host(_host), type(_type), hitbox(_hitbox) 
 {
+    baseHitboxDimensions = sf::Vector2f(_hitbox.width, _hitbox.height);
+    baseHitboxPosition = sf::Vector2f(_hitbox.left, _hitbox.top);
     velocity = sf::Vector2f(0.f,0.f);
     trigger = false;
     linearDrag = 0;

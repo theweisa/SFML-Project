@@ -18,6 +18,11 @@ void Game::Run() {
         Update();
     }
 }
+void Game::Init() {
+    InitAssets();
+    InitWindow(896, 960);
+    InitGame();
+}
 void Game::Update() {
     UpdateDeltaTime();
     UpdateMousePos();
@@ -73,6 +78,9 @@ void Game::UpdateGameObjects() {
         for (auto& obj : objVec.second) {
             obj->Update(deltaTime);
             UpdateObjectPhysics(*obj);
+            if (ExitedScreen(*obj)) {
+                OnScreenExit(*obj);
+            }
         }
     }
 }

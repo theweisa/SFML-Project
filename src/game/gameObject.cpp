@@ -55,12 +55,17 @@ void GameObject::UpdatePhysicsBody(float deltaTime) {
     body->Update(deltaTime);
 }
 
-void GameObject::SetHitbox(sf::FloatRect& hitbox) {
-    this->hitbox = hitbox;
-}
-
-void GameObject::SetHitbox(float width, float height) {
-    SetHitbox(sf::FloatRect(width, height, 0, 0));
+void GameObject::SetScale(sf::Vector2f newScale) {
+    sf::Vector2f prevScale = scale;
+    scale = newScale;
+    sprite.setScale(newScale);
+    
+    if (body != nullptr) {
+        sf::Vector2f scaleRatio = sf::Vector2f(scale.x/prevScale.x, scale.y/prevScale.y);
+        sf::Vector2f prevBodyDims = sf::Vector2f(body->hitbox.width, body->hitbox.height);
+        body->hitbox.width *= scaleRatio.x;
+        body->hitbox.height *= scaleRatio.y;
+    }
 }
 
 void GameObject::SetPosition(sf::Vector2f newPos) {

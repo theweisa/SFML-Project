@@ -27,9 +27,7 @@ class GameObject {
 		sf::Vector2f dimensions;
 		std::unordered_map<std::string, Animation*> animations;
 		sf::Vector2f localPosition;
-		PhysicsBody* body;
-
-		sf::FloatRect hitbox;
+		PhysicsBody* body = nullptr;
 
 		// methods
 		GameObject();
@@ -47,8 +45,7 @@ class GameObject {
 		void AddAnimation(std::string key, sf::Texture & spriteSheet, float fps, int startFrameX, int endFramesX, int startFrameY, int endFramesY, int newWidth, int newHeight);
 
 		virtual void SetPosition(sf::Vector2f newPos);
-		virtual void SetHitbox(sf::FloatRect &);
-		virtual void SetHitbox(float width, float height);
+		virtual void SetScale(sf::Vector2f newScale);
 		virtual void SetLocalPosition(sf::Vector2f newLocal);
 		void SetSpriteDimensions(sf::Vector2f);
 		virtual void SetPosition(float newX, float newY);

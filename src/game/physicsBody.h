@@ -18,6 +18,8 @@ public:
     bool trigger = true;
     sf::FloatRect hitbox;
     sf::Vector2f hitboxOffset;
+    sf::Vector2f baseHitboxDimensions;
+    sf::Vector2f baseHitboxPosition;
     BodyType type;
     sf::Vector2f velocity;
     float linearDrag;

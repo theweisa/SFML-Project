@@ -45,10 +45,12 @@ public:
     Game();
     ~Game();
     void Run();
+    virtual void Init();
     virtual void InitAssets();
     virtual void Update();
     virtual void Render();
     void InitWindow(float, float);
+    virtual void InitGame() {};
     const bool Running() const;
     //time it takes to update and render one frame
     void UpdateDeltaTime();
