@@ -45,7 +45,11 @@ void Game::InitWindow(float height, float width) {
     window->setFramerateLimit(60);
 }
 void Game::InitAssets() {
-    
+    #if _WIN32
+        assetsPath = "../../../assets/";
+    #elif __APPLE__
+        assetsPath = "../../assets/";
+    #endif
 }
 const bool Game::Running() const {
     return window->isOpen();
