@@ -31,13 +31,19 @@ class GameObject {
 
 		// methods
 		GameObject();
-		GameObject(sf::Texture*, sf::Vector2f pxScale=sf::Vector2f(0,0));
+		GameObject(std::string id, sf::Texture*, sf::Vector2f pos=sf::Vector2f(0,0));
 		GameObject(const GameObject&);
 		~GameObject();
 
 		virtual void Render(sf::RenderTarget&);
+		virtual void RenderHitbox(sf::RenderTarget&);
 		virtual void Update(float);
 		virtual void UpdatePhysicsBody(float);
+
+		virtual void OnTriggerEnter(PhysicsBody&) {};
+		virtual void OnTriggerExit(PhysicsBody&) {};
+		virtual void OnCollisionEnter(PhysicsBody&) {};
+		virtual void OnCollisionExit(PhysicsBody&) {};
 
 		// mutators
 		void AddPhysicsBody(PhysicsBody*);

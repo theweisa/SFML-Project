@@ -3,11 +3,15 @@
 GameObject::GameObject() {
     localPosition = sf::Vector2f(0.f,0.f);
 }
-GameObject::GameObject(sf::Texture* objectTexture, sf::Vector2f pos) {
+GameObject::GameObject(std::string id, sf::Texture* objectTexture, sf::Vector2f pos) {
+    std::cout << "init game object" << std::endl;
+    this->id = id;
     //set the animations sprite to the texture
     texture = *objectTexture;
 	sprite.setTexture(*objectTexture, true);
     sprite.setPosition(pos);
+    sprite.setOrigin(sf::Vector2f(sprite.getGlobalBounds().width/2.f, sprite.getGlobalBounds().height/2.f));
+    scale = sf::Vector2f(1,1);
     //SetSpriteDimensions(pxScale);
 }
 GameObject::GameObject(const GameObject& rhObj) {
@@ -46,6 +50,14 @@ void GameObject::Render(sf::RenderTarget& target) {
     target.draw(sprite);
 }
 
+void GameObject::RenderHitbox(sf::RenderTarget& target) {
+    if (body == nullptr) return;
+    sf::RectangleShape rect(sf::Vector2f(body->hitbox.width, body->hitbox.height));
+    rect.setFillColor(sf::Color(255, 255, 255, 100));
+    rect.setPosition(sf::Vector2f(GetPosition().x-(body->hitbox.left), GetPosition().y-(body->hitbox.top)));
+    target.draw(rect);
+}
+
 void GameObject::Update(float deltaTime) {
     UpdatePhysicsBody(deltaTime);
 }
@@ -59,12 +71,12 @@ void GameObject::SetScale(sf::Vector2f newScale) {
     sf::Vector2f prevScale = scale;
     scale = newScale;
     sprite.setScale(newScale);
-    
+    //sprite.setOrigin(sf::Vector2f(sprite.getGlobalBounds().width/2.f, sprite.getGlobalBounds().height/2.f));
     if (body != nullptr) {
-        sf::Vector2f scaleRatio = sf::Vector2f(scale.x/prevScale.x, scale.y/prevScale.y);
-        sf::Vector2f prevBodyDims = sf::Vector2f(body->hitbox.width, body->hitbox.height);
-        body->hitbox.width *= scaleRatio.x;
-        body->hitbox.height *= scaleRatio.y;
+        body->hitbox.width = body->baseHitboxDimensions.x * newScale.x;
+        body->hitbox.height = body->baseHitboxDimensions.y * newScale.y;
+        body->hitbox.left = body->baseHitboxPosition.x + (body->hitbox.width-body->baseHitboxDimensions.x)/2.f;
+        body->hitbox.top = body->baseHitboxPosition.y + (body->hitbox.height-body->baseHitboxDimensions.y)/2.f;
     }
 }
 

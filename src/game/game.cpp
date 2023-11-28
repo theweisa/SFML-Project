@@ -1,7 +1,7 @@
 #include "game.h"
 
 Game::Game() {
-    InitWindow(896, 960);
+    
 }
 
 Game::~Game() {
@@ -95,15 +95,23 @@ void Game::UpdateObjectPhysics(GameObject &object) {
     // this inefficient as hell but im curious if there's better ways to do it
     for (auto objVec : gameObjects) {
         for (auto& obj : objVec.second) {
-            if (object.body == nullptr || !(object.body->GetGlobalHitbox().intersects(obj->body->GetGlobalHitbox()))) {// || !object.body->interactableLayers[obj.body.layer]) {
+            if (object.body == nullptr || &object == obj) {// || !(object.body->GetGlobalHitbox().intersects(obj->body->GetGlobalHitbox()))) {// || !object.body->interactableLayers[obj.body.layer]) {
                 continue;
             }
-            if (object.body->trigger) {
-                object.body->OnTriggerEnter(*(obj->body));
+            if (obj->sprite.getGlobalBounds().intersects(object.sprite.getGlobalBounds())) {
+                object.OnTriggerEnter(*(obj->body));
+            }
+            // doesn't work for now teehee
+            /*if (obj->body->GetGlobalHitbox().intersects(object.body->GetGlobalHitbox())) {
+                object.OnTriggerEnter(*(obj->body));
+            }*/
+            //std::cout << "meet?" << std::endl;
+            /*if (object.body->trigger) {
+                object.OnTriggerEnter(*(obj->body));
             }
             else {
-                object.body->OnCollisionEnter(*(obj->body));
-            }
+                object.OnCollisionEnter(*(obj->body));
+            }*/
         }
     }
 }

@@ -35,10 +35,7 @@ public:
     sf::Vector2f Normalize(sf::Vector2f&);
     virtual float GetVelocityMagnitude();
     virtual sf::Vector2f GetDirection();
-    virtual void OnTriggerEnter(PhysicsBody&) {std::cout << "yomama" << std::endl;};
-    virtual void OnTriggerExit(PhysicsBody&) {};
-    virtual void OnCollisionEnter(PhysicsBody&) {};
-    virtual void OnCollisionExit(PhysicsBody&) {};
+    
     
 };
 

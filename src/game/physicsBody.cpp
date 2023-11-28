@@ -38,7 +38,7 @@ void PhysicsBody::SetVelocity(sf::Vector2f newVelocity) {
     velocity = newVelocity;
 }
 float PhysicsBody::GetVelocityMagnitude() {
-    return std::hypot(velocity.x, velocity.y);
+    return std::abs(std::hypot(velocity.x, velocity.y));
 }
 sf::Vector2f PhysicsBody::GetDirection() {
     sf::Vector2f dir = velocity;

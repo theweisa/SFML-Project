@@ -2,12 +2,13 @@
 #define PONG_H
 
 #include "../game/game.h"
+#include "paddle.h"
 
 class Pong : public Game {
 protected:
-    GameObject* playerOne;
-    GameObject* playerTwo;
-    sf::Vertex line[2];
+    Paddle* playerOne;
+    Paddle* playerTwo;
+    sf::VertexArray line;
 public:
     Pong();
     void InitGame() override;
@@ -15,6 +16,7 @@ public:
     void InitAssets() override;
     void Update() override;
     void OnScreenExit(GameObject&) override;
+    void UpdateInputs() override;
 };
 
 #endif
