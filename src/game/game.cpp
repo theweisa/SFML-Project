@@ -110,15 +110,15 @@ void Game::UpdateMousePos() {
 }
 void Game::AddAsset(const std::string key, const std::string fileName) {
 	assets[key] = new sf::Texture();
-	if (!assets[key]->loadFromFile(fileName)) {
-		std::cout << "ERROR: failed to load " << fileName << std::endl;
+	if (!assets[key]->loadFromFile(assetsPath+'/'+fileName)) {
+		std::cout << "ERROR: failed to load " << assetsPath+'/'+fileName << std::endl;
 	}
 }
 
 void Game::AddFont(const std::string key, const std::string fileName) {
     //fonts[key] = new sf::Font();
-	if (font.loadFromFile(fileName)) {
-		std::cout << "ERROR: failed to load " << fileName << std::endl;
+	if (font.loadFromFile(assetsPath+'/'+fileName)) {
+		std::cout << "ERROR: failed to load " << assetsPath+'/'+fileName << std::endl;
 	}
 }
 

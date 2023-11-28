@@ -5,6 +5,8 @@
 
 class Pong : public Game {
 public:
+    Pong();
+    void InitAssets() override;
     void Update() override;
 };
 
