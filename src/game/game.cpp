@@ -20,7 +20,7 @@ void Game::Run() {
 }
 void Game::Init() {
     InitAssets();
-    InitWindow(896, 960);
+    InitWindow(525, 858);
     InitGame();
 }
 void Game::Update() {
@@ -34,6 +34,19 @@ void Game::Update() {
 }
 void Game::Render() {
     window->clear();
+}
+void Game::RenderGameObjects() {
+    for (auto objVec : gameObjects) {
+        for (auto& obj : objVec.second) {
+            obj->Render(*window);
+        }
+    }
+}
+
+void Game::RenderText() {
+    for (auto txt : text) {
+        window->draw(*txt.second);
+    }
 }
 void Game::InitWindow(float height, float width) {
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
@@ -78,7 +91,7 @@ void Game::UpdateGameObjects() {
         for (auto& obj : objVec.second) {
             obj->Update(deltaTime);
             UpdateObjectPhysics(*obj);
-            if (ExitedScreen(*obj)) {
+            if (ExitedScreen(*obj, sf::Vector2f(obj->sprite.getGlobalBounds().width, obj->sprite.getGlobalBounds().height))) {
                 OnScreenExit(*obj);
             }
         }
@@ -106,12 +119,6 @@ void Game::UpdateObjectPhysics(GameObject &object) {
                 object.OnTriggerEnter(*(obj->body));
             }*/
             //std::cout << "meet?" << std::endl;
-            /*if (object.body->trigger) {
-                object.OnTriggerEnter(*(obj->body));
-            }
-            else {
-                object.OnCollisionEnter(*(obj->body));
-            }*/
         }
     }
 }

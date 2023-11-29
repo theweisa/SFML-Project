@@ -23,6 +23,8 @@ protected:
 	sf::VideoMode videoMode;
     float windowWidth;
     float windowHeight;
+    const float PI = 3.14159265;
+    
 
     // assets
     std::string assetsPath;
@@ -49,6 +51,8 @@ public:
     virtual void InitAssets();
     virtual void Update();
     virtual void Render();
+    virtual void RenderGameObjects();
+    virtual void RenderText();
     void InitWindow(float, float);
     virtual void InitGame() {};
     const bool Running() const;

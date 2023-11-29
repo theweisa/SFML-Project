@@ -27,12 +27,12 @@ public:
     PhysicsBody(GameObject* host, BodyType type, sf::FloatRect& hitbox);
     ~PhysicsBody() {};
     virtual void Update(float);
-    const sf::FloatRect PhysicsBody::GetGlobalHitbox() const;
+    const sf::FloatRect GetGlobalHitbox() const;
     virtual void SetVelocity(sf::Vector2f);
     virtual void SetSpeed(float);
     virtual void SetDirection(sf::Vector2f);
     virtual void SetDirection(float);
-    sf::Vector2f Normalize(sf::Vector2f&);
+    sf::Vector2f Normalize(sf::Vector2f);
     virtual float GetVelocityMagnitude();
     virtual sf::Vector2f GetDirection();
     

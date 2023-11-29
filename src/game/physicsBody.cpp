@@ -14,6 +14,7 @@ void PhysicsBody::Update(float deltaTime) {
     if (host == nullptr || (type == Static || type == Kinematic)) return;
     host->sprite.move(velocity.x*deltaTime, velocity.y*deltaTime);
 }
+
 const sf::FloatRect PhysicsBody::GetGlobalHitbox() const {
     return host->sprite.getTransform().transformRect(hitbox);
 }
@@ -23,11 +24,8 @@ void PhysicsBody::SetSpeed(float newSpeed) {
 }
 void PhysicsBody::SetDirection(float angle) {
     float speed = GetVelocityMagnitude();
-    sf::Vector2f dir = GetDirection();
-    velocity = speed * sf::Vector2f(
-        dir.x * (cos(angle)) + dir.y * (sin(angle)),
-        dir.y * (cos(angle)) - dir.x * (sin(angle))
-    );
+    angle *= 3.14159265 / 180.f;
+    velocity = speed * sf::Vector2f(cos(angle), sin(angle));
 }
 void PhysicsBody::SetDirection(sf::Vector2f newDir) {
     float speed = GetVelocityMagnitude();
@@ -41,11 +39,10 @@ float PhysicsBody::GetVelocityMagnitude() {
     return std::abs(std::hypot(velocity.x, velocity.y));
 }
 sf::Vector2f PhysicsBody::GetDirection() {
-    sf::Vector2f dir = velocity;
-    return Normalize(dir);
+    return Normalize(velocity);
 }
 
-sf::Vector2f PhysicsBody::Normalize(sf::Vector2f& vec) {
+sf::Vector2f PhysicsBody::Normalize(sf::Vector2f vec) {
     float mag = std::hypot(vec.x, vec.y);
     if (mag == 0) {
         vec = sf::Vector2f(0, 0);
