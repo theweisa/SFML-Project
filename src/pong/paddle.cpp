@@ -1,8 +1,7 @@
 #include "paddle.h"
-#include "pong.h"
 
-Paddle::Paddle(std::string id, sf::Texture* texture, sf::Vector2f pos, sf::Text* txt, float _speed) 
-: GameObject(id, texture, pos), scoreText(txt), speed(_speed) {
+Paddle::Paddle(std::string id, sf::Texture* texture, sf::Vector2f pos, bool isPlayer, sf::Text* txt, float _speed) 
+: GameObject(id, texture, pos), player(isPlayer), scoreText(txt), speed(_speed) {
 
 }
 
@@ -16,8 +15,17 @@ void Paddle::OnTriggerEnter(PhysicsBody& coll) {
 void Paddle::Update(float deltaTime) {
     //Game *game = Game::GetInstance();
     //std::cout << game->windowWidth << std::endl;
-    if (!player) {
+    if (!player && ballRef != nullptr) {
         // ai stuff here
+        if (ballRef->GetPosition().y < GetPosition().y) {
+            body->SetDirection(sf::Vector2f(0, -1));
+        }
+        else if (ballRef->GetPosition().y > GetPosition().y) {
+            body->SetDirection(sf::Vector2f(0, 1));
+        }
+        else {
+            body->SetDirection(sf::Vector2f(0, 0));
+        }
     }
     GameObject::Update(deltaTime);
 }

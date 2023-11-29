@@ -10,10 +10,12 @@ public:
     bool player=true;
     const float ballSpeedUp=20.f;
     sf::Text* scoreText;
+    GameObject* ballRef;
 
-    Paddle(std::string id, sf::Texture* texture, sf::Vector2f pos, sf::Text* txt, float speed);
+    Paddle(std::string id, sf::Texture* texture, sf::Vector2f pos, bool isPlayer, sf::Text* txt, float speed);
     void OnTriggerEnter(PhysicsBody&) override;
     void Update(float) override;
+    void SetBallRef(GameObject* ball) {ballRef=ball;}
 };
 
 #endif

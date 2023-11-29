@@ -29,13 +29,13 @@ void Pong::StartGame() {
     line[0].position = sf::Vector2f(windowWidth/2.f, 0);
     line[1].position = sf::Vector2f(windowWidth/2.f, windowHeight);
 
-    playerOne = new Paddle("playerOne", assets["ball"], sf::Vector2f(windowWidth*0.2f, windowHeight/2), text["p1 score"], 100.f);
+    playerOne = new Paddle("playerOne", assets["ball"], sf::Vector2f(windowWidth*0.2f, windowHeight/2), true, text["p1 score"], 100.f);
     sf::FloatRect playerOneHitbox = sf::FloatRect(4, 4, 8, 8);
     playerOne->AddPhysicsBody(new PhysicsBody(playerOne, PhysicsBody::Dynamic, playerOneHitbox));
     playerOne->SetScale(sf::Vector2f(1.2, 4));
     gameObjects["players"].push_back(playerOne);
 
-    playerTwo = new Paddle("playerTwo", assets["ball"], sf::Vector2f(windowWidth*0.8f, windowHeight/2), text["p2 score"], 100.f);
+    playerTwo = new Paddle("playerTwo", assets["ball"], sf::Vector2f(windowWidth*0.8f, windowHeight/2), false, text["p2 score"], 100.f);
     sf::FloatRect playerTwoHitbox = sf::FloatRect(4, 4, 8, 8);
     playerTwo->AddPhysicsBody(new PhysicsBody(playerTwo, PhysicsBody::Dynamic, playerTwoHitbox));
     playerTwo->SetScale(sf::Vector2f(1.2, 4));
