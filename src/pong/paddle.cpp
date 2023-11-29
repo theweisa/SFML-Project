@@ -1,4 +1,5 @@
 #include "paddle.h"
+#include "pong.h"
 
 Paddle::Paddle(std::string id, sf::Texture* texture, sf::Vector2f pos, sf::Text* txt, float _speed) 
 : GameObject(id, texture, pos), scoreText(txt), speed(_speed) {
@@ -13,6 +14,8 @@ void Paddle::OnTriggerEnter(PhysicsBody& coll) {
 }
 
 void Paddle::Update(float deltaTime) {
+    //Game *game = Game::GetInstance();
+    //std::cout << game->windowWidth << std::endl;
     if (!player) {
         // ai stuff here
     }

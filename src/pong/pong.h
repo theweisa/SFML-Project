@@ -7,7 +7,7 @@
 class Pong : public Game {
 protected:
     enum GameState { Start, Play, Score, GameOver };
-    GameState gameState=Play;
+    GameState gameState;
     GameObject* ball;
     Paddle* playerOne;
     Paddle* playerTwo;
@@ -19,6 +19,7 @@ protected:
 public:
     Pong();
     void InitGame() override;
+    void StartGame();
     void Render() override;
     void InitAssets() override;
     void Update() override;

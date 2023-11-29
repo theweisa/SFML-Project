@@ -28,6 +28,7 @@ class GameObject {
 		std::unordered_map<std::string, Animation*> animations;
 		sf::Vector2f localPosition;
 		PhysicsBody* body = nullptr;
+		bool active=true;
 
 		// methods
 		GameObject();
@@ -39,6 +40,7 @@ class GameObject {
 		virtual void RenderHitbox(sf::RenderTarget&);
 		virtual void Update(float);
 		virtual void UpdatePhysicsBody(float);
+		virtual void SetActive(bool newActive) { active=newActive; }
 
 		virtual void OnTriggerEnter(PhysicsBody&) {};
 		virtual void OnTriggerExit(PhysicsBody&) {};

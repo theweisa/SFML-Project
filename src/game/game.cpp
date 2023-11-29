@@ -1,7 +1,7 @@
 #include "game.h"
 
 Game::Game() {
-    
+
 }
 
 Game::~Game() {
@@ -38,6 +38,7 @@ void Game::Render() {
 void Game::RenderGameObjects() {
     for (auto objVec : gameObjects) {
         for (auto& obj : objVec.second) {
+            if (!obj->active) continue;
             obj->Render(*window);
         }
     }
@@ -89,6 +90,7 @@ void Game::UpdatePollEvents() {
 void Game::UpdateGameObjects() {
     for (auto objVec : gameObjects) {
         for (auto& obj : objVec.second) {
+            if (!obj->active) continue;
             obj->Update(deltaTime);
             UpdateObjectPhysics(*obj);
             if (ExitedScreen(*obj, sf::Vector2f(obj->sprite.getGlobalBounds().width, obj->sprite.getGlobalBounds().height))) {

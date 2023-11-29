@@ -6,11 +6,20 @@ Pong::Pong() {
 
 void Pong::InitGame() {
     Game::InitGame();
+    StartGame();
+    gameState = Play;
+    
+}
+
+void Pong::StartGame() {
     CreateBall();
-    text["p1 score"] = new sf::Text("0", font, 36);
-    text["p1 score"]->setPosition(windowWidth*0.35f, windowHeight*0.1f);
-    text["p2 score"] = new sf::Text("0", font, 36);
-    text["p2 score"]->setPosition(windowWidth*0.65f, windowHeight*0.1f);
+    gameState = Play;
+    text["p1 score"] = new sf::Text("0", font, 42);
+    text["p1 score"]->setPosition(windowWidth*0.4f, windowHeight*0.1f);
+    text["p1 score"]->setOrigin(text["p1 score"]->getLocalBounds().width/2, text["p1 score"]->getLocalBounds().height/2);
+    text["p2 score"] = new sf::Text("0", font, 42);
+    text["p2 score"]->setPosition(windowWidth*0.6f, windowHeight*0.1f);
+    text["p2 score"]->setOrigin(text["p2 score"]->getLocalBounds().width/2, text["p2 score"]->getLocalBounds().height/2);
 
     ball->body->SetVelocity(sf::Vector2f(1, 1));
     ball->body->SetDirection(0.f);
@@ -115,9 +124,28 @@ void Pong::ScoreRoutine() {
 void Pong::WinRoutine() {
     routineTimer += deltaTime;
     switch (routineStep) {
-        
+        case 0: {
+            std::string winner = "P1";
+            if (playerTwo->points >= winningPoints) winner = "P2";
+            text["win text"] = new sf::Text(winner + " Wins!", font, 64);
+            text["win text"]->setPosition(windowWidth/2, windowHeight*0.4);
+            text["win text"]->setOrigin(text["win text"]->getLocalBounds().width/2, text["win text"]->getLocalBounds().height/2);
+            routineStep++;
+            break;
+        }
+        case 1: {
+            if (routineTimer < 1) break;
+            text["menu text"] = new sf::Text("Press 'M' to go to the Menu", font, 48);
+            text["menu text"]->setPosition(windowWidth/2, windowHeight*0.6);
+            text["menu text"]->setOrigin(text["menu text"]->getLocalBounds().width/2, text["menu text"]->getLocalBounds().height/2);
+            routineStep++;
+            routineTimer = 0;
+        }
+        default: {
+            FinishRoutine();
+            break;
+        }
     }
-    FinishRoutine();
 }
 
 void Pong::FinishRoutine() {
@@ -127,31 +155,47 @@ void Pong::FinishRoutine() {
 
 void Pong::UpdateInputs() {
     Game::UpdateInputs();
-    if (gameState != Play) {
-        playerOne->body->SetVelocity(sf::Vector2f(0,0));
-        playerTwo->body->SetVelocity(sf::Vector2f(0,0));
-        return;
-    }
-    if (playerOne->player) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-            playerOne->body->SetVelocity(playerOne->speed*sf::Vector2f(0,-1));
+    switch (gameState) {
+        case Start: {
+            break;
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-            playerOne->body->SetVelocity(playerOne->speed*sf::Vector2f(0,1));
+        case Play: {
+            if (playerOne->player) {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+                    playerOne->body->SetVelocity(playerOne->speed*sf::Vector2f(0,-1));
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+                    playerOne->body->SetVelocity(playerOne->speed*sf::Vector2f(0,1));
+                }
+                else {
+                    playerOne->body->SetVelocity(sf::Vector2f(0,0));
+                }
+            }
+            if (playerTwo->player) {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+                    playerTwo->body->SetVelocity(playerTwo->speed*sf::Vector2f(0,-1));
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+                    playerTwo->body->SetVelocity(playerTwo->speed*sf::Vector2f(0,1));
+                }
+                else {
+                    playerTwo->body->SetVelocity(sf::Vector2f(0,0));
+                }
+            }
+            break;
         }
-        else {
+        case Score: {
             playerOne->body->SetVelocity(sf::Vector2f(0,0));
-        }
-    }
-    if (playerTwo->player) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-            playerTwo->body->SetVelocity(playerTwo->speed*sf::Vector2f(0,-1));
-        }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-            playerTwo->body->SetVelocity(playerTwo->speed*sf::Vector2f(0,1));
-        }
-        else {
             playerTwo->body->SetVelocity(sf::Vector2f(0,0));
+            break;
+        }
+        case GameOver: {
+            playerOne->body->SetVelocity(sf::Vector2f(0,0));
+            playerTwo->body->SetVelocity(sf::Vector2f(0,0));
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) {
+                std::cout << "to main menu!" << std::endl;
+            }
+            break;
         }
     }
 }
