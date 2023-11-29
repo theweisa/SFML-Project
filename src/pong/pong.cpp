@@ -12,7 +12,6 @@ void Pong::InitGame() {
 }
 
 void Pong::StartGame() {
-    CreateBall();
     gameState = Play;
     text["p1 score"] = new sf::Text("0", font, 42);
     text["p1 score"]->setPosition(windowWidth*0.4f, windowHeight*0.1f);
@@ -20,26 +19,27 @@ void Pong::StartGame() {
     text["p2 score"] = new sf::Text("0", font, 42);
     text["p2 score"]->setPosition(windowWidth*0.6f, windowHeight*0.1f);
     text["p2 score"]->setOrigin(text["p2 score"]->getLocalBounds().width/2, text["p2 score"]->getLocalBounds().height/2);
-
-    ball->body->SetVelocity(sf::Vector2f(1, 1));
-    ball->body->SetDirection(0.f);
-    ball->body->SetSpeed(baseBallSpeed);
     
     line = sf::VertexArray(sf::Lines, 2);
     line[0].position = sf::Vector2f(windowWidth/2.f, 0);
     line[1].position = sf::Vector2f(windowWidth/2.f, windowHeight);
 
-    playerOne = new Paddle("playerOne", assets["ball"], sf::Vector2f(windowWidth*0.2f, windowHeight/2), true, text["p1 score"], 100.f);
+    playerOne = new Paddle("playerOne", assets["ball"], sf::Vector2f(windowWidth*0.2f, windowHeight/2), true, text["p1 score"], 150.f);
     sf::FloatRect playerOneHitbox = sf::FloatRect(4, 4, 8, 8);
     playerOne->AddPhysicsBody(new PhysicsBody(playerOne, PhysicsBody::Dynamic, playerOneHitbox));
     playerOne->SetScale(sf::Vector2f(1.2, 4));
     gameObjects["players"].push_back(playerOne);
 
-    playerTwo = new Paddle("playerTwo", assets["ball"], sf::Vector2f(windowWidth*0.8f, windowHeight/2), false, text["p2 score"], 100.f);
+    playerTwo = new Paddle("playerTwo", assets["ball"], sf::Vector2f(windowWidth*0.8f, windowHeight/2), false, text["p2 score"], 150.f);
     sf::FloatRect playerTwoHitbox = sf::FloatRect(4, 4, 8, 8);
     playerTwo->AddPhysicsBody(new PhysicsBody(playerTwo, PhysicsBody::Dynamic, playerTwoHitbox));
     playerTwo->SetScale(sf::Vector2f(1.2, 4));
     gameObjects["players"].push_back(playerTwo);
+
+    CreateBall();
+    ball->body->SetVelocity(sf::Vector2f(1, 1));
+    ball->body->SetDirection(0.f);
+    ball->body->SetSpeed(baseBallSpeed);
 }
 
 void Pong::InitAssets() {
@@ -54,6 +54,8 @@ void Pong::CreateBall() {
     ball->AddPhysicsBody(new PhysicsBody(ball, PhysicsBody::Dynamic, ballHitbox));
     //ball->body->SetVelocity(sf::Vector2f(-100, -10));
     gameObjects["ball"].push_back(ball);
+    playerOne->SetBallRef(ball);
+    playerTwo->SetBallRef(ball);
 }
 
 void Pong::Render() {
@@ -66,6 +68,8 @@ void Pong::Render() {
 void Pong::PlayerScore(Paddle* winningPlayer) {
     delete ball;
     ball = nullptr;
+    playerOne->SetBallRef(nullptr);
+    playerTwo->SetBallRef(nullptr);
     gameObjects["ball"].clear();
     winningPlayer->points += 1;
     winningPlayer->scoreText->setString(std::to_string(winningPlayer->points));
@@ -162,10 +166,10 @@ void Pong::UpdateInputs() {
         case Play: {
             if (playerOne->player) {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-                    playerOne->body->SetVelocity(playerOne->speed*sf::Vector2f(0,-1));
+                    playerOne->body->SetVelocity(sf::Vector2f(0,-playerOne->speed));
                 }
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-                    playerOne->body->SetVelocity(playerOne->speed*sf::Vector2f(0,1));
+                    playerOne->body->SetVelocity(sf::Vector2f(0,playerOne->speed));
                 }
                 else {
                     playerOne->body->SetVelocity(sf::Vector2f(0,0));
@@ -173,10 +177,10 @@ void Pong::UpdateInputs() {
             }
             if (playerTwo->player) {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-                    playerTwo->body->SetVelocity(playerTwo->speed*sf::Vector2f(0,-1));
+                    playerTwo->body->SetVelocity(sf::Vector2f(0,-playerTwo->speed));
                 }
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-                    playerTwo->body->SetVelocity(playerTwo->speed*sf::Vector2f(0,1));
+                    playerTwo->body->SetVelocity(sf::Vector2f(0,playerTwo->speed));
                 }
                 else {
                     playerTwo->body->SetVelocity(sf::Vector2f(0,0));

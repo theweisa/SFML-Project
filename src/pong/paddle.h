@@ -9,6 +9,7 @@ public:
     int points=0;
     bool player=true;
     const float ballSpeedUp=20.f;
+    const float trackOffset=5.f;
     sf::Text* scoreText;
     GameObject* ballRef;
 

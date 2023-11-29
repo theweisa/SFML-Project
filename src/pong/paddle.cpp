@@ -2,7 +2,7 @@
 
 Paddle::Paddle(std::string id, sf::Texture* texture, sf::Vector2f pos, bool isPlayer, sf::Text* txt, float _speed) 
 : GameObject(id, texture, pos), player(isPlayer), scoreText(txt), speed(_speed) {
-
+    
 }
 
 void Paddle::OnTriggerEnter(PhysicsBody& coll) {
@@ -17,14 +17,14 @@ void Paddle::Update(float deltaTime) {
     //std::cout << game->windowWidth << std::endl;
     if (!player && ballRef != nullptr) {
         // ai stuff here
-        if (ballRef->GetPosition().y < GetPosition().y) {
-            body->SetDirection(sf::Vector2f(0, -1));
+        if (ballRef->GetPosition().y < GetPosition().y-trackOffset) {
+            body->SetVelocity(sf::Vector2f(0, -speed));
         }
-        else if (ballRef->GetPosition().y > GetPosition().y) {
-            body->SetDirection(sf::Vector2f(0, 1));
+        else if (ballRef->GetPosition().y > GetPosition().y+trackOffset) {
+            body->SetVelocity(sf::Vector2f(0, speed));
         }
         else {
-            body->SetDirection(sf::Vector2f(0, 0));
+            body->SetVelocity(sf::Vector2f(0, 0));
         }
     }
     GameObject::Update(deltaTime);
