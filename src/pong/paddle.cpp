@@ -15,17 +15,22 @@ void Paddle::OnTriggerEnter(PhysicsBody& coll) {
 void Paddle::Update(float deltaTime) {
     //Game *game = Game::GetInstance();
     //std::cout << game->windowWidth << std::endl;
-    if (!player && ballRef != nullptr) {
-        // ai stuff here
-        if (ballRef->GetPosition().y < GetPosition().y-trackOffset) {
-            body->SetVelocity(sf::Vector2f(0, -speed));
-        }
-        else if (ballRef->GetPosition().y > GetPosition().y+trackOffset) {
-            body->SetVelocity(sf::Vector2f(0, speed));
-        }
-        else {
-            body->SetVelocity(sf::Vector2f(0, 0));
-        }
+    if (!player) {
+        UpdateAI(deltaTime);
     }
     GameObject::Update(deltaTime);
+}
+
+void Paddle::UpdateAI(float deltaTime) {
+    // ai stuff here
+    if (ballRef == nullptr) return;
+    if (ballRef->GetPosition().y < GetPosition().y-trackOffset) {
+        body->SetVelocity(sf::Vector2f(0, -speed));
+    }
+    else if (ballRef->GetPosition().y > GetPosition().y+trackOffset) {
+        body->SetVelocity(sf::Vector2f(0, speed));
+    }
+    else {
+        body->SetVelocity(sf::Vector2f(0, 0));
+    }
 }

@@ -16,6 +16,7 @@ public:
     Paddle(std::string id, sf::Texture* texture, sf::Vector2f pos, bool isPlayer, sf::Text* txt, float speed);
     void OnTriggerEnter(PhysicsBody&) override;
     void Update(float) override;
+    void UpdateAI(float);
     void SetBallRef(GameObject* ball) {ballRef=ball;}
 };
 
