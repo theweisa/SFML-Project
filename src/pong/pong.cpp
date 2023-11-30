@@ -6,12 +6,10 @@ Pong::Pong() {
 
 void Pong::InitGame() {
     Game::InitGame();
-    StartGame();
-    gameState = Play;
-    
+    StartGame(true, false);    
 }
 
-void Pong::StartGame() {
+void Pong::StartGame(bool isPlayerOne, bool isPlayerTwo) {
     gameState = Play;
     text["p1 score"] = new sf::Text("0", font, 42);
     text["p1 score"]->setPosition(windowWidth*0.4f, windowHeight*0.1f);
@@ -24,13 +22,13 @@ void Pong::StartGame() {
     line[0].position = sf::Vector2f(windowWidth/2.f, 0);
     line[1].position = sf::Vector2f(windowWidth/2.f, windowHeight);
 
-    playerOne = new Paddle("playerOne", assets["ball"], sf::Vector2f(windowWidth*0.2f, windowHeight/2), true, text["p1 score"], 150.f);
+    playerOne = new Paddle("playerOne", assets["ball"], sf::Vector2f(windowWidth*0.2f, windowHeight/2), isPlayerOne, text["p1 score"], 150.f);
     sf::FloatRect playerOneHitbox = sf::FloatRect(4, 4, 8, 8);
     playerOne->AddPhysicsBody(new PhysicsBody(playerOne, PhysicsBody::Dynamic, playerOneHitbox));
     playerOne->SetScale(sf::Vector2f(1.2, 4));
     gameObjects["players"].push_back(playerOne);
 
-    playerTwo = new Paddle("playerTwo", assets["ball"], sf::Vector2f(windowWidth*0.8f, windowHeight/2), false, text["p2 score"], 150.f);
+    playerTwo = new Paddle("playerTwo", assets["ball"], sf::Vector2f(windowWidth*0.8f, windowHeight/2), isPlayerTwo, text["p2 score"], 150.f);
     sf::FloatRect playerTwoHitbox = sf::FloatRect(4, 4, 8, 8);
     playerTwo->AddPhysicsBody(new PhysicsBody(playerTwo, PhysicsBody::Dynamic, playerTwoHitbox));
     playerTwo->SetScale(sf::Vector2f(1.2, 4));
@@ -40,6 +38,14 @@ void Pong::StartGame() {
     ball->body->SetVelocity(sf::Vector2f(1, 1));
     ball->body->SetDirection(0.f);
     ball->body->SetSpeed(baseBallSpeed);
+}
+
+void Pong::ShowMenu() {
+    gameState = PreStart;
+}
+
+void Pong::HideMenu() {
+
 }
 
 void Pong::InitAssets() {
@@ -103,7 +109,28 @@ void Pong::ScoreRoutine() {
     routineTimer += deltaTime;
     switch (routineStep) {
         case 0: {
-            if (routineTimer < 2) break;
+            for (auto player : gameObjects["players"]) {
+                sf::Color c = dynamic_cast<Paddle*>(player)->scoreText->getFillColor();
+                c.a = 0;
+                dynamic_cast<Paddle*>(player)->scoreText->setFillColor(c);
+            }
+            routineTimer = 0;
+            routineStep++;
+            break;
+        }
+        case 1: {
+            if (routineTimer < 0.3) break;
+            for (auto player : gameObjects["players"]) {
+                sf::Color c = dynamic_cast<Paddle*>(player)->scoreText->getFillColor();
+                c.a = 255;
+                dynamic_cast<Paddle*>(player)->scoreText->setFillColor(c);
+            }
+            routineTimer = 0;
+            routineStep++;
+            break;
+        }
+        case 2: {
+            if (routineTimer < 1) break;
             CreateBall();
             for (auto& obj : gameObjects["players"]) {
                 obj->SetPosition(sf::Vector2f(obj->GetPosition().x, windowHeight/2.f));
@@ -112,7 +139,7 @@ void Pong::ScoreRoutine() {
             routineStep++;
             break;
         }
-        case 1: {
+        case 3: {
             if (routineTimer < 1) break;
             ball->body->SetVelocity(sf::Vector2f(1, 1));
             ball->body->SetDirection(0.f);

@@ -1,7 +1,7 @@
 #include "game.h"
 
 Game::Game() {
-
+    srand(static_cast<unsigned>(time(0)));
 }
 
 Game::~Game() {
@@ -181,6 +181,10 @@ std::vector<GameObject*> Game::PositionOverGameObjects(sf::Vector2f pos) {
         }
     }
     return hoveredObjs;
+}
+
+const float Game::RandomRange(float min, float max) const {
+    return min + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(max-min)));
 }
 
 

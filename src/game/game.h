@@ -67,6 +67,7 @@ public:
     virtual void OnScreenExit(GameObject&) {};
     void AddAsset(const std::string, const std::string);
     void AddFont(const std::string, const std::string);
+    const float RandomRange(float min, float max) const;
     sf::Text* CreateText(const std::string initialText, unsigned charSize, sf::Vector2f initialPos, const std::string key, sf::Color color=sf::Color::White);
 
     std::vector<GameObject*> PositionOverGameObjects(sf::Vector2f);
