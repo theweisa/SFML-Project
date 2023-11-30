@@ -2,7 +2,10 @@
 
 Paddle::Paddle(std::string id, sf::Texture* texture, sf::Vector2f pos, bool isPlayer, sf::Text* txt, float _speed) 
 : GameObject(id, texture, pos), player(isPlayer), scoreText(txt), baseSpeed(_speed), speed(_speed) {
-    
+    if (!isPlayer) {
+        speed = 120;
+        baseSpeed = speed;
+    }
 }
 
 void Paddle::OnTriggerEnter(PhysicsBody& coll) {
@@ -10,7 +13,7 @@ void Paddle::OnTriggerEnter(PhysicsBody& coll) {
     std::cout << "collision!" << std::endl;
     // change move speed on coll for AIs
     if (!player) {
-        float speedOff = -speedOffset + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(speedOffset-(-speedOffset))));
+        float speedOff = -speedOffset + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(speedOffset-(-speedOffset))));
         speed = baseSpeed + speedOff;
         std::cout << "new speed: " << speed << std::endl;
     }

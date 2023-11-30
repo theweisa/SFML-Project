@@ -9,9 +9,8 @@ Game::~Game() {
     //delete textures
 	for (auto& texture : assets) delete texture.second;
     // delete game objects
-    for (auto objVec : gameObjects) {
-        for (auto& obj : objVec.second) delete obj;
-    }
+    DeleteAllGameObjects();
+    ClearText();
 }
 void Game::Run() {
     while(Running()) {
@@ -186,7 +185,23 @@ std::vector<GameObject*> Game::PositionOverGameObjects(sf::Vector2f pos) {
 const float Game::RandomRange(float min, float max) const {
     return min + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(max-min)));
 }
+const int Game::RandomRange(int min, int max) const {
+    return min + rand() % (max+1-min);
+}
 
+bool Game::DeleteText(std::string name) {
+    delete text[name];
+    size_t val = text.erase(name);
+    if (val > 0) return true;
+    return false;
+}
+
+void Game::ClearText() {
+    for (auto &keyval : text) {
+        delete keyval.second;
+    }
+    text.clear();
+}
 
 bool Game::DeleteGameObject(GameObject* delObj) {
     for (auto &keyval : gameObjects) {
@@ -208,4 +223,14 @@ bool Game::DeleteGameObject(std::string key, int index) {
         return true;
     }
     return false;
+}
+
+void Game::DeleteAllGameObjects() {
+    for (auto &keyval : gameObjects) {
+        for (int i = keyval.second.size()-1; i >= 0; i--) {
+            delete keyval.second.at(i);
+        }
+        keyval.second.clear();
+    }
+    gameObjects.clear();
 }

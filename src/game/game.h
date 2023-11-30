@@ -57,7 +57,7 @@ public:
     virtual void InitGame() {};
     const bool Running() const;
     //time it takes to update and render one frame
-    void UpdateDeltaTime();
+    virtual void UpdateDeltaTime();
     virtual void UpdatePollEvents();
     virtual void UpdateGameObjects();
     virtual void UpdateObjectPhysics(GameObject&);
@@ -68,12 +68,16 @@ public:
     void AddAsset(const std::string, const std::string);
     void AddFont(const std::string, const std::string);
     const float RandomRange(float min, float max) const;
+    const int RandomRange(int min, int max) const;
     sf::Text* CreateText(const std::string initialText, unsigned charSize, sf::Vector2f initialPos, const std::string key, sf::Color color=sf::Color::White);
 
     std::vector<GameObject*> PositionOverGameObjects(sf::Vector2f);
     void CenterText(sf::Text*);
+    bool DeleteText(std::string);
+    void ClearText();
     bool DeleteGameObject(GameObject*);
     bool DeleteGameObject(std::string, int);
+    void DeleteAllGameObjects();
 
     sf::Vector2f GetMousePosView() { return mousePosView; }
 };

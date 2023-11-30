@@ -13,7 +13,7 @@ public:
     const float trackOffset=5.f;
     const float speedOffset=30.f;
     sf::Text* scoreText;
-    GameObject* ballRef;
+    GameObject* ballRef = nullptr;
 
     Paddle(std::string id, sf::Texture* texture, sf::Vector2f pos, bool isPlayer, sf::Text* txt, float speed);
     void OnTriggerEnter(PhysicsBody&) override;
