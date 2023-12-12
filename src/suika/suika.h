@@ -7,6 +7,7 @@ class Suika : public Game {
 public:
     Suika();
     void InitGame() override;
+    void InitAssets() override;
 };
 
 #endif

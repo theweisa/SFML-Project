@@ -87,8 +87,12 @@ void Game::UpdatePollEvents() {
 	}
 }
 
-void Game::Instantiate(const std::string parent, sf::Vector2f pos, PhysicsBody::BodyType bodyType=PhysicsBody::Static) {
-    
+GameObject* Game::Instantiate(const std::string parent, const std::string textureName, sf::Vector2f pos, PhysicsBody::BodyType bodyType) {
+   GameObject * obj = new GameObject("yomama", assets[textureName], pos);
+   sf::FloatRect box = sf::FloatRect(4, 4, 8, 8);
+   obj->AddPhysicsBody(new PhysicsBody(obj, bodyType, box));
+   gameObjects[parent].push_back(obj);
+   return obj;
 }
 
 void Game::UpdateGameObjects() {
