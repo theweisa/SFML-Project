@@ -2,6 +2,7 @@
 
 Game::Game() {
     srand(static_cast<unsigned>(time(0)));
+    Init();
 }
 
 Game::~Game() {
