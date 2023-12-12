@@ -27,8 +27,8 @@ public:
     // dynamic variables
     sf::Vector2f currentPos;
     sf::Vector2f prevPos;
-    sf::Vector2f acceleration;
-    sf::Vector2f gravity = sf::Vector2f(0, 1000);
+    sf::Vector2f acceleration = sf::Vector2f(0,0);
+    sf::Vector2f gravity = sf::Vector2f(0, 9.8);
     
     PhysicsBody(GameObject* host, BodyType type, sf::FloatRect& hitbox);
     ~PhysicsBody() {};

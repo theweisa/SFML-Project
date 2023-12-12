@@ -8,6 +8,8 @@ PhysicsBody::PhysicsBody(GameObject* _host, BodyType _type, sf::FloatRect& _hitb
     velocity = sf::Vector2f(0.f,0.f);
     trigger = false;
     linearDrag = 0;
+    currentPos = host->GetPosition();
+    prevPos = currentPos;
 }
 
 void PhysicsBody::Update(float deltaTime) {

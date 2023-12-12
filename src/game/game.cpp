@@ -27,20 +27,12 @@ void Game::Update() {
     UpdateMousePos();
     UpdatePollEvents();
     UpdateInputs();
-    UpdateGameObjects();
     Render();
+    UpdateGameObjects();
     window->display();
 }
 void Game::Render() {
     window->clear();
-}
-void Game::RenderGameObjects() {
-    for (auto objVec : gameObjects) {
-        for (auto& obj : objVec.second) {
-            if (!obj->active) continue;
-            obj->Render(*window);
-        }
-    }
 }
 
 void Game::RenderText() {
@@ -88,7 +80,7 @@ void Game::UpdatePollEvents() {
 }
 
 GameObject* Game::Instantiate(const std::string parent, const std::string textureName, sf::Vector2f pos, PhysicsBody::BodyType bodyType) {
-   GameObject * obj = new GameObject("yomama", assets[textureName], pos);
+   GameObject* obj = new GameObject("yomama", assets[textureName], pos);
    sf::FloatRect box = sf::FloatRect(4, 4, 8, 8);
    obj->AddPhysicsBody(new PhysicsBody(obj, bodyType, box));
    gameObjects[parent].push_back(obj);
@@ -100,6 +92,7 @@ void Game::UpdateGameObjects() {
         for (auto& obj : objVec.second) {
             if (!obj->active) continue;
             obj->Update(deltaTime);
+            if (renderGameObjects) obj->Render(*window);
             UpdateObjectPhysics(*obj);
             if (ExitedScreen(*obj, sf::Vector2f(obj->sprite.getGlobalBounds().width, obj->sprite.getGlobalBounds().height))) {
                 OnScreenExit(*obj);

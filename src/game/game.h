@@ -43,6 +43,8 @@ protected:
     sf::Clock deltaClock;
     float deltaTime;
 
+    bool renderGameObjects = true;
+
 public:
     Game();
     ~Game();
@@ -51,7 +53,6 @@ public:
     virtual void InitAssets();
     virtual void Update();
     virtual void Render();
-    virtual void RenderGameObjects();
     virtual void RenderText();
     void InitWindow(float, float);
     virtual void InitGame() {};
