@@ -11,8 +11,33 @@ PhysicsBody::PhysicsBody(GameObject* _host, BodyType _type, sf::FloatRect& _hitb
 }
 
 void PhysicsBody::Update(float deltaTime) {
-    if (host == nullptr || (type == Static || type == Kinematic)) return;
-    host->sprite.move(velocity.x*deltaTime, velocity.y*deltaTime);
+    if (host == nullptr) return;
+    switch (type) {
+        case Static:
+            break;
+        case Kinematic:
+            host->sprite.move(velocity.x*deltaTime, velocity.y*deltaTime);
+            break;
+        case Dynamic:
+            UpdateVelocity(deltaTime);
+            break;
+        default:
+            break;
+    }
+}
+
+void PhysicsBody::UpdateVelocity(float deltaTime) {
+    Accelerate(gravity);
+    velocity = currentPos - prevPos;
+    prevPos = currentPos;
+    currentPos = prevPos + velocity + acceleration * pow(deltaTime, 2.f);
+    acceleration = sf::Vector2f(0.f, 0.f);
+
+    host->sprite.setPosition(currentPos);
+}
+
+void PhysicsBody::Accelerate(sf::Vector2f acc) {
+    acceleration += acc;
 }
 
 const sf::FloatRect PhysicsBody::GetGlobalHitbox() const {

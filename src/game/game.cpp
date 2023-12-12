@@ -2,7 +2,6 @@
 
 Game::Game() {
     srand(static_cast<unsigned>(time(0)));
-    Init();
 }
 
 Game::~Game() {
@@ -87,6 +86,11 @@ void Game::UpdatePollEvents() {
         }
 	}
 }
+
+void Game::Instantiate(const std::string parent, sf::Vector2f pos, PhysicsBody::BodyType bodyType=PhysicsBody::Static) {
+    
+}
+
 void Game::UpdateGameObjects() {
     for (auto objVec : gameObjects) {
         for (auto& obj : objVec.second) {

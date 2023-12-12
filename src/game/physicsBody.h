@@ -23,6 +23,12 @@ public:
     BodyType type;
     sf::Vector2f velocity;
     float linearDrag;
+
+    // dynamic variables
+    sf::Vector2f currentPos;
+    sf::Vector2f prevPos;
+    sf::Vector2f acceleration;
+    sf::Vector2f gravity = sf::Vector2f(0, 1000);
     
     PhysicsBody(GameObject* host, BodyType type, sf::FloatRect& hitbox);
     ~PhysicsBody() {};
@@ -35,6 +41,9 @@ public:
     sf::Vector2f Normalize(sf::Vector2f);
     virtual float GetVelocityMagnitude();
     virtual sf::Vector2f GetDirection();
+
+    virtual void UpdateVelocity(float);
+    virtual void Accelerate(sf::Vector2f);
     
     
 };

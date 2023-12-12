@@ -1,8 +1,8 @@
-#include "game/game.h"
+#include "suika/suika.h"
 
 int main()
 {
-    Game game;
+    Suika game;
     game.Run();
     return 0;
 }

@@ -70,6 +70,7 @@ public:
     const float RandomRange(float min, float max) const;
     const int RandomRange(int min, int max) const;
     sf::Text* CreateText(const std::string initialText, unsigned charSize, sf::Vector2f initialPos, const std::string key, sf::Color color=sf::Color::White);
+    void Instantiate(const std::string parent, sf::Vector2f pos, PhysicsBody::BodyType bodyType=PhysicsBody::Static);
 
     std::vector<GameObject*> PositionOverGameObjects(sf::Vector2f);
     void CenterText(sf::Text*);
