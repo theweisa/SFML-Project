@@ -24,8 +24,8 @@ void Suika::InitGame() {
     ballToDrop = RandomRange(0, ballDropList.size()-1);
     nextBallToDrop = RandomRange(0, ballDropList.size()-1);
     InitConstraints();
-    Instantiate("displaySprite", ballDataTable[ballToDrop].assetName, sf::Vector2f(0,0));
-    Instantiate("nextSprite", ballDataTable[nextBallToDrop].assetName, sf::Vector2f(windowWidth*0.7f,windowHeight*0.2f));
+    //Instantiate("displaySprite", ballDataTable[ballToDrop].assetName, sf::Vector2f(0,0));
+    //Instantiate("nextSprite", ballDataTable[nextBallToDrop].assetName, sf::Vector2f(0,0));
     //obj->SetScale(sf::Vector2f(3.f, 3.f));
 }
 
@@ -47,8 +47,8 @@ void Suika::UpdatePollEvents() {
                 gameObjects["balls"].push_back(InstantiateBall(ballToDrop, dropPos));
                 ballToDrop = nextBallToDrop;
                 nextBallToDrop = RandomRange(0, ballDropList.size()-1);
-                gameObjects["displaySprite"][0]->SetTexture(assets[ballDataTable[ballToDrop].assetName]);
-                gameObjects["nextSprite"][0]->SetTexture(assets[ballDataTable[nextBallToDrop].assetName]);
+                //Instantiate("displaySprite", ballDataTable[ballToDrop].assetName, sf::Vector2f(0,0));
+                //Instantiate("nextSprite", ballDataTable[nextBallToDrop].assetName, sf::Vector2f(0,0));
                 break;
         }
 	}
@@ -59,7 +59,6 @@ void Suika::Update() {
     if (dropTimer > 0) {
         dropTimer -= deltaTime;
     }
-    gameObjects["displaySprite"][0]->SetPosition(dropPos);
 }
 
 void Suika::UpdateMousePos() {
