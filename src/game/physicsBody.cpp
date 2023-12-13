@@ -10,6 +10,7 @@ PhysicsBody::PhysicsBody(GameObject* _host, BodyType _type, sf::FloatRect& _hitb
     linearDrag = 0;
     currentPos = host->GetPosition();
     prevPos = currentPos;
+    SetBaseRadius(radius);
 }
 
 void PhysicsBody::Update(float deltaTime) {
@@ -67,6 +68,10 @@ float PhysicsBody::GetVelocityMagnitude() {
 }
 sf::Vector2f PhysicsBody::GetDirection() {
     return Normalize(velocity);
+}
+void PhysicsBody::SetBaseRadius(float newRadius) {
+    radius = newRadius;
+    baseRadius = radius;
 }
 
 sf::Vector2f PhysicsBody::Normalize(sf::Vector2f vec) {

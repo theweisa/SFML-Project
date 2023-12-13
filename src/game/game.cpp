@@ -93,7 +93,7 @@ void Game::UpdateGameObjects() {
             if (!obj->active) continue;
             obj->Update(deltaTime);
             if (renderGameObjects) obj->Render(*window);
-            UpdateObjectPhysics(*obj);
+            UpdateObjectPhysics(obj);
             if (ExitedScreen(*obj, sf::Vector2f(obj->sprite.getGlobalBounds().width, obj->sprite.getGlobalBounds().height))) {
                 OnScreenExit(*obj);
             }
@@ -105,17 +105,19 @@ bool Game::ExitedScreen(GameObject &object, sf::Vector2f offset) {
     return object.GetPosition().y < offset.y || object.GetPosition().y >= windowHeight - offset.y || object.GetPosition().x < offset.x || object.GetPosition().x >= windowWidth - offset.x;
 }
 
-void Game::UpdateObjectPhysics(GameObject &object) {
-    if (object.body == nullptr) return;
-    object.body->Update(deltaTime);
+void Game::UpdateObjectPhysics(GameObject* object) {
+    if (object->body == nullptr) return;
+    object->body->Update(deltaTime);
+    object->collidedObjects.clear();
     // this inefficient as hell but im curious if there's better ways to do it
     for (auto objVec : gameObjects) {
         for (auto& obj : objVec.second) {
-            if (object.body == nullptr || &object == obj) {// || !(object.body->GetGlobalHitbox().intersects(obj->body->GetGlobalHitbox()))) {// || !object.body->interactableLayers[obj.body.layer]) {
+            if (object->body == nullptr || object == obj) {// || !(object.body->GetGlobalHitbox().intersects(obj->body->GetGlobalHitbox()))) {// || !object.body->interactableLayers[obj.body.layer]) {
                 continue;
             }
-            if (obj->sprite.getGlobalBounds().intersects(object.sprite.getGlobalBounds())) {
-                object.OnTriggerEnter(*(obj->body));
+            if (obj->sprite.getGlobalBounds().intersects(object->sprite.getGlobalBounds())) {
+                object->collidedObjects.push_back(*obj);
+                object->OnTriggerEnter(*(obj->body));
             }
             // doesn't work for now teehee
             /*if (obj->body->GetGlobalHitbox().intersects(object.body->GetGlobalHitbox())) {

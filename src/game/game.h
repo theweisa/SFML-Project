@@ -61,7 +61,7 @@ public:
     virtual void UpdateDeltaTime();
     virtual void UpdatePollEvents();
     virtual void UpdateGameObjects();
-    virtual void UpdateObjectPhysics(GameObject&);
+    virtual void UpdateObjectPhysics(GameObject*);
     void UpdateMousePos();
     virtual void UpdateInputs();
     bool ExitedScreen(GameObject&, sf::Vector2f=sf::Vector2f(0,0));

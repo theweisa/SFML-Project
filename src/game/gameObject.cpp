@@ -77,15 +77,19 @@ void GameObject::SetScale(sf::Vector2f newScale) {
         body->hitbox.height = body->baseHitboxDimensions.y * newScale.y;
         body->hitbox.left = body->baseHitboxPosition.x + (body->hitbox.width-body->baseHitboxDimensions.x)/2.f;
         body->hitbox.top = body->baseHitboxPosition.y + (body->hitbox.height-body->baseHitboxDimensions.y)/2.f;
+        body->radius = body->baseRadius * newScale.x;
     }
 }
 
 void GameObject::SetPosition(sf::Vector2f newPos) {
     sprite.setPosition(newPos+localPosition);
+    if (body == nullptr) return;
+    body->currentPos = newPos;
+    // body->prevPos = newPos;
 }
 
 void GameObject::SetPosition(float newX, float newY) {
-    sprite.setPosition(newX+localPosition.x, newY+localPosition.y);
+    SetPosition(sf::Vector2f(newX, newY));
 }
 
 void GameObject::SetSpriteDimensions(sf::Vector2f pxScale) {

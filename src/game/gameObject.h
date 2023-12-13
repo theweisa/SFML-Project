@@ -28,6 +28,7 @@ class GameObject {
 		std::unordered_map<std::string, Animation*> animations;
 		sf::Vector2f localPosition;
 		PhysicsBody* body = nullptr;
+		std::vector<GameObject*> collidedObjects;
 		bool active=true;
 
 		// methods
