@@ -12,6 +12,7 @@
 #include <vector>
 #include <fstream>
 #include <cmath>
+#include <array>
 
 #include "gameObject.h"
 
@@ -62,7 +63,7 @@ public:
     virtual void UpdatePollEvents();
     virtual void UpdateGameObjects();
     virtual void UpdateObjectPhysics(GameObject*);
-    void UpdateMousePos();
+    virtual void UpdateMousePos();
     virtual void UpdateInputs();
     bool ExitedScreen(GameObject&, sf::Vector2f=sf::Vector2f(0,0));
     virtual void OnScreenExit(GameObject&) {};
@@ -71,7 +72,8 @@ public:
     const float RandomRange(float min, float max) const;
     const int RandomRange(int min, int max) const;
     sf::Text* CreateText(const std::string initialText, unsigned charSize, sf::Vector2f initialPos, const std::string key, sf::Color color=sf::Color::White);
-    GameObject* Instantiate(const std::string parent, const std::string textureName, sf::Vector2f pos, PhysicsBody::BodyType bodyType=PhysicsBody::Static);
+    GameObject* Instantiate(const std::string parent, const std::string textureName, sf::Vector2f pos);
+    GameObject* Instantiate(const std::string parent, const std::string textureName, sf::Vector2f pos, PhysicsBody::BodyType bodyType);
 
     std::vector<GameObject*> PositionOverGameObjects(sf::Vector2f);
     void CenterText(sf::Text*);

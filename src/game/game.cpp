@@ -87,6 +87,12 @@ GameObject* Game::Instantiate(const std::string parent, const std::string textur
    return obj;
 }
 
+GameObject* Game::Instantiate(const std::string parent, const std::string textureName, sf::Vector2f pos) {
+    GameObject* obj = new GameObject("yomama", assets[textureName], pos);
+    gameObjects[parent].push_back(obj);
+    return obj;
+}
+
 void Game::UpdateGameObjects() {
     for (auto objVec : gameObjects) {
         for (auto& obj : objVec.second) {
@@ -116,7 +122,7 @@ void Game::UpdateObjectPhysics(GameObject* object) {
                 continue;
             }
             if (obj->sprite.getGlobalBounds().intersects(object->sprite.getGlobalBounds())) {
-                object->collidedObjects.push_back(*obj);
+                object->collidedObjects.push_back(obj);
                 object->OnTriggerEnter(*(obj->body));
             }
             // doesn't work for now teehee

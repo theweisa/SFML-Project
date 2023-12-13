@@ -4,7 +4,6 @@ GameObject::GameObject() {
     localPosition = sf::Vector2f(0.f,0.f);
 }
 GameObject::GameObject(std::string id, sf::Texture* objectTexture, sf::Vector2f pos) {
-    std::cout << "init game object" << std::endl;
     this->id = id;
     //set the animations sprite to the texture
     texture = *objectTexture;
@@ -47,6 +46,7 @@ const bool GameObject::GetEndOfAnimation(const std::string key)
 }
 
 void GameObject::Render(sf::RenderTarget& target) {
+    if (!active) return;
     target.draw(sprite);
 }
 
@@ -63,7 +63,7 @@ void GameObject::Update(float deltaTime) {
 }
 
 void GameObject::UpdatePhysicsBody(float deltaTime) {
-    if (body == nullptr) return;
+    if (body == nullptr || !active) return;
     body->Update(deltaTime);
 }
 
@@ -112,13 +112,13 @@ void GameObject::SetTexture(sf::Texture* txtr, sf::Vector2f pxScale) {
 void GameObject::SetTexture(const sf::Texture * txtr) {
     texture = *txtr;
     sprite.setTexture(*txtr, true);
-    SetSpriteDimensions(dimensions);
+    //SetSpriteDimensions(dimensions);
 }
 
 void GameObject::SetTexture(sf::Texture* txtr) {
     texture = *txtr;
     sprite.setTexture(*txtr, true);
-    SetSpriteDimensions(dimensions);
+    //SetSpriteDimensions(dimensions);
 }
 
 const bool GameObject::InsideBounds(sf::Vector2f pos) {
