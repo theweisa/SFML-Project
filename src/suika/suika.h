@@ -48,7 +48,7 @@ public:
     void UpdatePollEvents() override;
     void Update() override;
     void SetDisplaySprites();
-    //void Render() override {};
+    void Render() override;
     void GameOver();
     void Reset();
     SuikaBall* InstantiateBall(int type, sf::Vector2f pos);

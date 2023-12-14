@@ -6,6 +6,7 @@ Suika::Suika() {
 
 void Suika::InitGame() {
     Game::InitGame();
+    windowColor = sf::Color(79, 40, 55, 255);
     yLimitPos = windowHeight * 0.25f;
     ballDataTable = {
         {0, BallData(0, "ball0", 0.5, 1)},
@@ -20,12 +21,14 @@ void Suika::InitGame() {
         {9, BallData(9, "ball9", 4.19, 55)},
         {10, BallData(10, "ball10", 5, 66)}
     };
-    ballDropList = {0, 1, 2, 3};
+    ballDropList = {0, 1, 2, 3, 4};
     ballToDrop = RandomRange(0, ballDropList.size()-1);
     nextBallToDrop = RandomRange(0, ballDropList.size()-1);
     GameObject * player = Instantiate("player", "player", sf::Vector2f(0,0));
     player->SetScale(sf::Vector2f(2,2));
     player->sprite.setOrigin(player->sprite.getGlobalBounds().width*0.2, player->sprite.getGlobalBounds().height*0.4);
+
+    GameObject * wheel = Instantiate("wheel", "wheel", sf::Vector2f(windowWidth*0.84f, windowHeight*0.5f));
     //sprite.setOrigin(sf::Vector2f(sprite.getGlobalBounds().width/2.f, sprite.getGlobalBounds().height/2.f));
     InitConstraints();
     SetDisplaySprites();
@@ -34,9 +37,9 @@ void Suika::InitGame() {
 
 void Suika::InitText() {
     Game::InitText();
-    CreateText("POINTS", 24, sf::Vector2f(windowWidth*0.15f, windowHeight*0.4f), "points");
-    CreateText("0", 24, sf::Vector2f(windowWidth*0.15f, windowHeight*0.5f), "numPoints");
-    CreateText("NEXT", 24, sf::Vector2f(windowWidth*0.83f, windowHeight*0.4f), "next");
+    CreateText("points", 24, sf::Vector2f(windowWidth*0.15f, windowHeight*0.4f), "points");
+    CreateText("0", 24, sf::Vector2f(windowWidth*0.15f, windowHeight*0.47f), "numPoints");
+    CreateText("next", 24, sf::Vector2f(windowWidth*0.84f, windowHeight*0.43f), "next");
     CenterText(text["numPoints"]);
     CenterText(text["points"]);
     CenterText(text["next"]);
@@ -54,6 +57,11 @@ void Suika::InitConstraints() {
     GameObject * bg = Instantiate("bg", "container", sf::Vector2f(boundingBox.getPosition().x, yLimitPos));
     bg->sprite.setOrigin(0,0);
     // sf::FloatRect box = sf::FloatRect(4, 4, 8, 8);
+}
+
+void Suika::Render() {
+    Game::Render();
+    gameObjects["bg"][0]->Render(*window);
 }
 
 void Suika::UpdatePollEvents() {
@@ -155,7 +163,7 @@ void Suika::SetDisplaySprites() {
     DeleteGameObject("displaySprite", 0);
     DeleteGameObject("nextSprite", 0);
     GameObject * displaySprite = Instantiate("displaySprite", ballDataTable[ballToDrop].assetName, dropPos);
-    GameObject * nextSprite = Instantiate("nextSprite", ballDataTable[nextBallToDrop].assetName, sf::Vector2f(windowWidth*0.83f, windowHeight*0.5f));//sf::Vector2f(text["next"]->getPosition().x, text["next"]->getPosition().y+40));
+    GameObject * nextSprite = Instantiate("nextSprite", ballDataTable[nextBallToDrop].assetName, sf::Vector2f(windowWidth*0.84f, windowHeight*0.53f));//sf::Vector2f(text["next"]->getPosition().x, text["next"]->getPosition().y+40));
     displaySprite->SetScale(sf::Vector2f(ballDataTable[ballToDrop].scale, ballDataTable[ballToDrop].scale));
     nextSprite->SetScale(sf::Vector2f(ballDataTable[nextBallToDrop].scale, ballDataTable[nextBallToDrop].scale));
 }
@@ -175,7 +183,9 @@ void Suika::UpdateGameObjects() {
                 continue;
             }
             obj->Update(deltaTime);
-            if (renderGameObjects) obj->Render(*window);
+            if (renderGameObjects && it->first != "bg") {
+                obj->Render(*window);
+            }
             if (obj->body != nullptr) {
                 for (int i = 0; i < updateSteps; i++) {
                     UpdateObjectPhysics(obj);
@@ -247,7 +257,11 @@ SuikaBall* Suika::MergeBalls(SuikaBall* ballOne, SuikaBall* ballTwo) {
     int type = ballOne->type;
     points += ballDataTable[type].points;
     text["numPoints"]->setString(std::to_string(points));
-    if (ballDataTable.find((ballOne->type+1)) == ballDataTable.end()) {
+    CenterText(text["numPoints"]);
+    /*if (ballDataTable.find((ballOne->type+1)) == ballDataTable.end()) {
+        return nullptr;
+    }*/
+    if (ballOne->type+1 >= ballDataTable.size()) {
         return nullptr;
     }
     float radius = ballDataTable[type+1].scale * 16;
@@ -277,4 +291,5 @@ void Suika::InitAssets() {
     AddAsset("ball9", "textures/ball9.png");
     AddAsset("ball10", "textures/ball10.png");
     AddAsset("player", "textures/player.png");
+    AddAsset("wheel", "textures/wheel.png");
 }
