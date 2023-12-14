@@ -9,7 +9,7 @@ public:
     int type;
     int points;
     bool transform = false;
-    float maxYVel = 0.2f;
+    float maxYVel = 0.3f;
     float loseTimer = 3;
     float baseLoseTimer;
     bool aboveLine = false;
@@ -30,14 +30,16 @@ public:
         else {
             loseTimer = baseLoseTimer;
         }
+        GameObject::Update(deltaTime);
     }
 
     void UpdatePhysicsBody(float deltaTime) override {
         if (body == nullptr || !active) return;
         // stop things from launching upwards
         sf::Vector2f vel = body->currentPos-body->prevPos;
-        //std::cout << "velocity: " << vel.y << std::endl;
-        if (vel.y <= -maxYVel) {
+        // std::cout << "velocity: " << vel.y << std::endl;
+        if (vel.y < -maxYVel) {
+            //std::cout << "above max vel" << std::endl;
             body->currentPos = sf::Vector2f(body->currentPos.x, body->prevPos.y);//+std::min(vel.y, -maxYVel));
         }
         body->Update(deltaTime);

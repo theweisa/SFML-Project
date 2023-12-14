@@ -25,7 +25,7 @@ protected:
     float windowWidth;
     float windowHeight;
     const float PI = 3.14159265;
-    
+    sf::Color windowColor;
 
     // assets
     std::string assetsPath;
@@ -62,6 +62,7 @@ public:
     virtual void UpdateDeltaTime();
     virtual void UpdatePollEvents();
     virtual void UpdateGameObjects();
+    virtual void UpdateText();
     virtual void UpdateObjectPhysics(GameObject*);
     virtual void UpdateMousePos();
     virtual void UpdateInputs();

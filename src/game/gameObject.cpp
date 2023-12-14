@@ -2,6 +2,7 @@
 
 GameObject::GameObject() {
     localPosition = sf::Vector2f(0.f,0.f);
+    body = nullptr;
 }
 GameObject::GameObject(std::string id, sf::Texture* objectTexture, sf::Vector2f pos) {
     this->id = id;
@@ -11,6 +12,7 @@ GameObject::GameObject(std::string id, sf::Texture* objectTexture, sf::Vector2f 
     sprite.setPosition(pos);
     sprite.setOrigin(sf::Vector2f(sprite.getGlobalBounds().width/2.f, sprite.getGlobalBounds().height/2.f));
     scale = sf::Vector2f(1,1);
+    body = nullptr;
     //SetSpriteDimensions(pxScale);
 }
 GameObject::GameObject(const GameObject& rhObj) {

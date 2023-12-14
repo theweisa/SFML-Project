@@ -32,7 +32,7 @@ void Game::Update() {
     window->display();
 }
 void Game::Render() {
-    window->clear();
+    window->clear(windowColor);
 }
 
 void Game::RenderText() {
@@ -42,7 +42,7 @@ void Game::RenderText() {
 }
 void Game::InitWindow(float height, float width) {
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
-
+    windowColor = sf::Color(117, 57, 42, 255);
     //set the resolution of the game
     videoMode.height = height;
     videoMode.width = width;
@@ -104,6 +104,12 @@ void Game::UpdateGameObjects() {
                 OnScreenExit(*obj);
             }
         }
+    }
+}
+
+void Game::UpdateText() {
+    for (auto* t : text) {
+        window->draw(t);
     }
 }
 
@@ -227,6 +233,7 @@ bool Game::DeleteGameObject(GameObject* delObj) {
 }
 
 bool Game::DeleteGameObject(std::string key, int index) {
+    if (gameObjects.find(key) == gameObjects.end() || index >= gameObjects[key].size()) return false;
     delete gameObjects[key][index];
     auto itr = gameObjects[key].erase(gameObjects[key].begin()+index);
     if (itr != gameObjects[key].end()) {
