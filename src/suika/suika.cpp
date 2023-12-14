@@ -23,10 +23,24 @@ void Suika::InitGame() {
     ballDropList = {0, 1, 2, 3};
     ballToDrop = RandomRange(0, ballDropList.size()-1);
     nextBallToDrop = RandomRange(0, ballDropList.size()-1);
+    GameObject * player = Instantiate("player", "player", sf::Vector2f(0,0));
+    player->SetScale(sf::Vector2f(2,2));
+    player->sprite.setOrigin(player->sprite.getGlobalBounds().width*0.2, player->sprite.getGlobalBounds().height*0.4);
+    //sprite.setOrigin(sf::Vector2f(sprite.getGlobalBounds().width/2.f, sprite.getGlobalBounds().height/2.f));
     InitConstraints();
     SetDisplaySprites();
-    //obj->SetScale(sf::Vector2f(3.f, 3.f));
-    CreateText("points", 16, sf::Vector2f(windowWidth*0.2f, windowHeight*0.2f), "points");
+    InitText();
+    
+}
+
+void Suika::InitText() {
+    Game::InitText();
+    CreateText("POINTS", 24, sf::Vector2f(windowWidth*0.15f, windowHeight*0.4f), "points");
+    CreateText("0", 24, sf::Vector2f(windowWidth*0.15f, windowHeight*0.5f), "numPoints");
+    CreateText("NEXT", 24, sf::Vector2f(windowWidth*0.83f, windowHeight*0.4f), "next");
+    CenterText(text["numPoints"]);
+    CenterText(text["points"]);
+    CenterText(text["next"]);
 }
 
 void Suika::InitConstraints() {
@@ -55,22 +69,29 @@ void Suika::UpdatePollEvents() {
                 window->close();
                 break;
             case sf::Event::MouseButtonPressed:
-                if (dropTimer > 0) break;
+                if (dropTimer > 0 || gameOver) break;
                 dropTimer = dropInterval;
                 gameObjects["balls"].push_back(InstantiateBall(ballToDrop, dropPos));
                 ballToDrop = nextBallToDrop;
                 nextBallToDrop = RandomRange(0, ballDropList.size()-1);
                 SetDisplaySprites();
                 break;
+            case sf::Event::KeyPressed:
+                break;
         }
 	}
 }
 
 void Suika::Update() {
+    if (gameOver) {
+        UpdatePollEvents();
+        return;
+    }
     Game::Update();
     if (!gameObjects["displaySprite"].empty()) {
         gameObjects["displaySprite"][0]->SetPosition(dropPos);
     }
+    gameObjects["player"][0]->SetPosition(dropPos);
     if (dropTimer > 0) {
         dropTimer -= deltaTime;
     }
@@ -93,6 +114,7 @@ void Suika::ApplyConstraints(GameObject* obj) {
         ball->aboveLine = true;
         if (ball->loseTimer <= 0) {
             std::cout << "game over!" << std::endl;
+            gameOver = true;
         }
     }
     else if (ball != nullptr) {
@@ -125,7 +147,7 @@ void Suika::SetDisplaySprites() {
     DeleteGameObject("displaySprite", 0);
     DeleteGameObject("nextSprite", 0);
     GameObject * displaySprite = Instantiate("displaySprite", ballDataTable[ballToDrop].assetName, dropPos);
-    GameObject * nextSprite = Instantiate("nextSprite", ballDataTable[nextBallToDrop].assetName, sf::Vector2f(0,0));
+    GameObject * nextSprite = Instantiate("nextSprite", ballDataTable[nextBallToDrop].assetName, sf::Vector2f(windowWidth*0.83f, windowHeight*0.5f));//sf::Vector2f(text["next"]->getPosition().x, text["next"]->getPosition().y+40));
     displaySprite->SetScale(sf::Vector2f(ballDataTable[ballToDrop].scale, ballDataTable[ballToDrop].scale));
     nextSprite->SetScale(sf::Vector2f(ballDataTable[nextBallToDrop].scale, ballDataTable[nextBallToDrop].scale));
 }
@@ -183,7 +205,7 @@ void Suika::UpdateObjectPhysics(GameObject *object) {
                 if (dist < object->body->radius + objTwo->body->radius) {
                     const sf::Vector2 n = collAxis / dist;
                     const float delta = object->body->radius + objTwo->body->radius - dist;
-                    const float massRatio = object->body->radius / (object->body->radius + objTwo->body->radius);
+                    const float massRatio = objTwo->body->radius / (object->body->radius + objTwo->body->radius);
                     object->SetPosition(object->GetPosition() + massRatio * delta * n); 
                     object->OnCollisionEnter(*(objTwo->body));
                     SuikaBall* ball = dynamic_cast<SuikaBall*>(object);
@@ -212,10 +234,16 @@ SuikaBall * Suika::InstantiateBall(int type, sf::Vector2f pos) {
 SuikaBall* Suika::MergeBalls(SuikaBall* ballOne, SuikaBall* ballTwo) {
     int type = ballOne->type;
     points += ballDataTable[type].points;
+    text["numPoints"]->setString(std::to_string(points));
     if (ballDataTable.find((ballOne->type+1)) == ballDataTable.end()) {
         return nullptr;
     }
+    float radius = ballDataTable[type+1].scale * 16;
     sf::Vector2f midPoint = sf::Vector2f((ballOne->GetPosition().x+ballTwo->GetPosition().x)/2, (ballOne->GetPosition().y+ballTwo->GetPosition().y)/2);
+    midPoint = sf::Vector2f(
+        std::clamp(midPoint.x, boundingBox.getPosition().x+radius, boundingBox.getPosition().x+boundingBox.width-radius),
+        std::clamp(midPoint.y, boundingBox.getPosition().y+radius, boundingBox.getPosition().y+boundingBox.height-radius)
+    );
     SuikaBall* newBall = InstantiateBall(type+1, midPoint);
     return newBall;
 }
@@ -236,5 +264,5 @@ void Suika::InitAssets() {
     AddAsset("ball8", "textures/ball8.png");
     AddAsset("ball9", "textures/ball9.png");
     AddAsset("ball10", "textures/ball10.png");
-
+    AddAsset("player", "textures/player.png");
 }

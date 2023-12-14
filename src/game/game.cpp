@@ -33,6 +33,7 @@ void Game::Update() {
 }
 void Game::Render() {
     window->clear(windowColor);
+    RenderText();
 }
 
 void Game::RenderText() {
@@ -104,12 +105,6 @@ void Game::UpdateGameObjects() {
                 OnScreenExit(*obj);
             }
         }
-    }
-}
-
-void Game::UpdateText() {
-    for (auto* t : text) {
-        window->draw(t);
     }
 }
 

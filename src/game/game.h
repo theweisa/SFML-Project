@@ -51,6 +51,7 @@ public:
     ~Game();
     void Run();
     virtual void Init();
+    virtual void InitText() {};
     virtual void InitAssets();
     virtual void Update();
     virtual void Render();
@@ -62,7 +63,6 @@ public:
     virtual void UpdateDeltaTime();
     virtual void UpdatePollEvents();
     virtual void UpdateGameObjects();
-    virtual void UpdateText();
     virtual void UpdateObjectPhysics(GameObject*);
     virtual void UpdateMousePos();
     virtual void UpdateInputs();

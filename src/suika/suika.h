@@ -32,10 +32,13 @@ public:
     float dropTimer = 0;
     float yLimitPos;
 
+    bool gameOver = false;
+
     sf::VertexArray loseLine;
 
     Suika();
     void InitGame() override;
+    void InitText() override;
     void InitConstraints();
     void ApplyConstraints(GameObject*);
     void InitAssets() override;
