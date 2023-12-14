@@ -29,11 +29,11 @@ void Game::Update() {
     UpdateInputs();
     Render();
     UpdateGameObjects();
+    RenderText();
     window->display();
 }
 void Game::Render() {
     window->clear(windowColor);
-    RenderText();
 }
 
 void Game::RenderText() {
@@ -41,6 +41,15 @@ void Game::RenderText() {
         window->draw(*txt.second);
     }
 }
+
+void Game::RenderGameObjects() {
+    for (auto objVec : gameObjects) {
+        for (auto& obj : objVec.second) {
+            obj->Render(*window);
+        }
+    }
+}
+
 void Game::InitWindow(float height, float width) {
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     windowColor = sf::Color(117, 57, 42, 255);

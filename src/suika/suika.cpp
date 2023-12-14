@@ -30,7 +30,6 @@ void Suika::InitGame() {
     InitConstraints();
     SetDisplaySprites();
     InitText();
-    
 }
 
 void Suika::InitText() {
@@ -57,11 +56,6 @@ void Suika::InitConstraints() {
     // sf::FloatRect box = sf::FloatRect(4, 4, 8, 8);
 }
 
-void Suika::Render() {
-    Game::Render();
-    window->draw(loseLine);
-}
-
 void Suika::UpdatePollEvents() {
     while (window->pollEvent(ev)) {
 		switch (ev.type) {
@@ -77,16 +71,15 @@ void Suika::UpdatePollEvents() {
                 SetDisplaySprites();
                 break;
             case sf::Event::KeyPressed:
+                if (gameOver && ev.key.code == sf::Keyboard::R) {
+                    Reset();
+                }
                 break;
         }
 	}
 }
 
 void Suika::Update() {
-    if (gameOver) {
-        UpdatePollEvents();
-        return;
-    }
     Game::Update();
     if (!gameObjects["displaySprite"].empty()) {
         gameObjects["displaySprite"][0]->SetPosition(dropPos);
@@ -95,6 +88,22 @@ void Suika::Update() {
     if (dropTimer > 0) {
         dropTimer -= deltaTime;
     }
+    //window->draw(loseLine);
+}
+
+void Suika::GameOver() {
+    gameOver = true;
+    ClearText();
+    CenterText(CreateText("Game Over", 36, sf::Vector2f(windowWidth/2, windowHeight*0.4), "gameOver"));
+    CenterText(CreateText("Final Score: " + std::to_string(points), 24, sf::Vector2f(windowWidth/2, windowHeight*0.5), "score"));
+    CenterText(CreateText("Press R to Reset", 24, sf::Vector2f(windowWidth/2, windowHeight*0.6), "reset"));
+}
+
+void Suika::Reset() {
+    gameOver = false;
+    DeleteAllGameObjects();
+    ClearText();
+    InitGame();
 }
 
 void Suika::UpdateMousePos() {
@@ -113,8 +122,7 @@ void Suika::ApplyConstraints(GameObject* obj) {
     if (ball != nullptr && objPos.y-radius < yLimitPos) {
         ball->aboveLine = true;
         if (ball->loseTimer <= 0) {
-            std::cout << "game over!" << std::endl;
-            gameOver = true;
+            GameOver();
         }
     }
     else if (ball != nullptr) {
@@ -153,6 +161,10 @@ void Suika::SetDisplaySprites() {
 }
 
 void Suika::UpdateGameObjects() {
+    if (gameOver) {
+        RenderGameObjects();
+        return;
+    }
     createdBalls.clear();
     for (auto it = gameObjects.begin(); it != gameObjects.end(); it++) {
         auto itr = it->second.begin();

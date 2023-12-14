@@ -48,7 +48,9 @@ public:
     void UpdatePollEvents() override;
     void Update() override;
     void SetDisplaySprites();
-    void Render() override;
+    //void Render() override {};
+    void GameOver();
+    void Reset();
     SuikaBall* InstantiateBall(int type, sf::Vector2f pos);
     SuikaBall* MergeBalls(SuikaBall* ballOne, SuikaBall* ballTwo);
     //GameObject* InstantiateBall(const std::string parent, const std::string textureName, sf::Vector2f pos, PhysicsBody::BodyType bodyType=PhysicsBody::Static);
